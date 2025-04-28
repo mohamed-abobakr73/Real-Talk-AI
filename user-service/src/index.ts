@@ -3,7 +3,7 @@ import { configDotenv } from "dotenv";
 import morgan from "morgan";
 import helmet from "helmet";
 import cors from "cors";
-import getRedisClient from "./config/redisConnection";
+
 configDotenv();
 
 const app = express();
