@@ -3,6 +3,8 @@ import { configDotenv } from "dotenv";
 import morgan from "morgan";
 import helmet from "helmet";
 import cors from "cors";
+import imagekitClient from "./config/imageKit";
+import upload from "./config/multer";
 
 configDotenv();
 
@@ -13,7 +15,7 @@ app.use(morgan("dev"));
 app.use(cors());
 app.use(helmet());
 
-app.get("/", (req, res) => {
+app.get("/upload", upload.single("file"), (req, res) => {
   res.json({ name: "test", email: "test@test.com" });
 });
 
