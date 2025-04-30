@@ -6,6 +6,7 @@ import cors from "cors";
 import TGlobalError from "./types/TGlobalError";
 import httpStatusText from "./utils/httpStatusText";
 import usersRouter from "./routes/usersRoute";
+import authRouter from "./routes/authRoute";
 
 configDotenv();
 
@@ -16,6 +17,7 @@ app.use(morgan("dev"));
 app.use(cors());
 app.use(helmet());
 
+app.use("/auth", authRouter);
 app.use("/users", usersRouter);
 
 app.use(
