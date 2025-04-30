@@ -5,6 +5,7 @@ class GlobalError extends Error implements TGlobalError {
   public message: string;
   public statusCode: number;
   public statusText: string;
+  public validationErrors?: string[];
   constructor() {
     super();
     this.message = "Something went wrong";
@@ -12,10 +13,16 @@ class GlobalError extends Error implements TGlobalError {
     this.statusText = httpStatusText.ERROR;
   }
 
-  create(message: string, statusCode: number, statusText: string) {
+  create(
+    message: string,
+    statusCode: number,
+    statusText: string,
+    validationErrors?: string[]
+  ) {
     this.message = message;
     this.statusCode = statusCode;
     this.statusText = statusText;
+    this.validationErrors = validationErrors;
     return this;
   }
 }
