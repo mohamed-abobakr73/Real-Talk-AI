@@ -4,11 +4,11 @@ type TAsyncFunction = (
   req: Request,
   res: Response,
   next: NextFunction
-) => Promise<void>;
+) => Promise<Response | void>;
 
-const asyncHandler = async (asyncFunc: TAsyncFunction) => {
+const asyncHandler = (asyncFunc: TAsyncFunction) => {
   return async (req: Request, res: Response, next: NextFunction) => {
-    return asyncFunc(req, res, next).catch((error) => next(error));
+    asyncFunc(req, res, next).catch((error) => next(error));
   };
 };
 

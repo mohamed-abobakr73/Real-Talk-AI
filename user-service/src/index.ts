@@ -17,8 +17,8 @@ app.use(morgan("dev"));
 app.use(cors());
 app.use(helmet());
 
-app.use("/auth", authRouter);
-app.use("/users", usersRouter);
+app.use("/v1/auth", authRouter);
+// app.use("/v1/users", usersRouter);
 
 app.use(
   (error: TGlobalError, req: Request, res: Response, next: NextFunction) => {
