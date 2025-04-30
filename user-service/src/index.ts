@@ -3,10 +3,9 @@ import { configDotenv } from "dotenv";
 import morgan from "morgan";
 import helmet from "helmet";
 import cors from "cors";
-import upload from "./config/multer";
 import TGlobalError from "./types/TGlobalError";
-import globalError from "./utils/globalError";
 import httpStatusText from "./utils/httpStatusText";
+import usersRouter from "./routes/usersRoute";
 
 configDotenv();
 
@@ -17,15 +16,12 @@ app.use(morgan("dev"));
 app.use(cors());
 app.use(helmet());
 
-app.get("/upload", (req, res, next) => {
-  const error = globalError.create("error testing", 201, httpStatusText.ERROR);
-  return next(error);
-});
+app.use("/users", usersRouter);
 
 app.use(
   (error: TGlobalError, req: Request, res: Response, next: NextFunction) => {
     res.status(error.statusCode || 500).json({
-      status: error.statusText || "error",
+      status: error.statusText || httpStatusText.ERROR,
       message: error.message || "Something went wrong",
       code: error.statusCode || 500,
       data: null,
