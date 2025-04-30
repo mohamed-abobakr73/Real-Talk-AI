@@ -20,7 +20,7 @@ model User {
   email String @unique()
   password String?
   oauthProvider oauthProvider?
-  profileImage String? @default("https://ucarecdn.com/d80e06b5-67cd-4a73-98db-b534a8f538a8/useravatar.jpg")
+  profileImage String? @default("https://ik.imagekit.io/RealTalk/tr:n-ik_ml_thumbnail/user-avatar_H3y7eWAOa.jpg")
 }
 
 enum oauthProvider {

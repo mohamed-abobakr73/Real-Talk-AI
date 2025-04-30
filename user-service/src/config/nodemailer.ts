@@ -1,23 +1,20 @@
-import express from "express";
+import nodemailer from "nodemailer";
 import { configDotenv } from "dotenv";
-import morgan from "morgan";
-import helmet from "helmet";
-import cors from "cors";
-import imagekitClient from "./config/imageKit";
-import upload from "./config/multer";
-import transporter from "./config/nodemailer";
 
 configDotenv();
 
-const app = express();
+const NODE_MAILER_USER = process.env.NODE_MAILER_USER;
+const NODE_MAILER_PASS = process.env.NODE_MAILER_PASS;
 
-app.use(express.json());
-app.use(morgan("dev"));
-app.use(cors());
-app.use(helmet());
-
-app.get("/upload", upload.single("file"), (req, res) => {
-  res.json({ name: "test", email: "test@test.com" });
+const transporter = nodemailer.createTransport({
+  service: "Gmail",
+  host: "smtp.gmail.com",
+  port: 587,
+  secure: false, // true for port 465, false for other ports
+  auth: {
+    user: NODE_MAILER_USER,
+    pass: NODE_MAILER_PASS,
+  },
 });
 
 async function main() {
@@ -35,7 +32,4 @@ async function main() {
 }
 
 main().catch(console.error);
-
-app.listen(process.env.PORT || 5000, () => {
-  console.log(`Server is running on port ${process.env.PORT}`);
-});
+export default transporter;
