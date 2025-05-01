@@ -1,40 +1,32 @@
 import getRedisClient from "../config/redisConnection";
-import { TRedisClient } from "../types";
 
-class RedisUtils {
-  private redisClient: any;
-  static instance: RedisUtils;
-  constructor() {
-    if (RedisUtils.instance) {
-      return RedisUtils.instance;
-    }
-    RedisUtils.instance = this;
-    this.redisClient = getRedisClient().then((client) => client);
+let redisClient: any;
+(async function getRedisClientInstance() {
+  if (!redisClient) {
+    redisClient = await getRedisClient();
   }
+  return redisClient;
+})();
 
-  public async set(key: string, value: string) {
-    await this.redisClient.set(key, value);
-  }
+const redisUtils = {
+  set: async (key: string, value: string) => {
+    await redisClient.set(key, value);
+  },
+  get: async (key: string) => {
+    return await redisClient.get(key);
+  },
+  delete: async (key: string) => {
+    await redisClient.del(key);
+  },
+  exists: async (key: string) => {
+    return await redisClient.exists(key);
+  },
+  expire: async (key: string, ttl: number) => {
+    await redisClient.expire(key, ttl);
+  },
+  ttl: async (key: string) => {
+    return await redisClient.ttl(key);
+  },
+};
 
-  public async get(key: string) {
-    return await this.redisClient.get(key);
-  }
-
-  public async delete(key: string) {
-    await this.redisClient.del(key);
-  }
-
-  public async exists(key: string) {
-    return await this.redisClient.exists(key);
-  }
-
-  public async expire(key: string, ttl: number) {
-    await this.redisClient.expire(key, ttl);
-  }
-
-  public async ttl(key: string) {
-    return await this.redisClient.ttl(key);
-  }
-}
-
-export default RedisUtils;
+export default redisUtils;

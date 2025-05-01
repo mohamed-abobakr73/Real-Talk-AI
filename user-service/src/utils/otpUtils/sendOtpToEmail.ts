@@ -1,5 +1,7 @@
 import transporter from "../../config/nodemailer";
+import hashKey from "../hashingUtils/hashKey";
 import generateOTP from "./generateOTP";
+import saveOtpToRedis from "./saveOTPToRedis";
 
 const generateEmailHtml = (otp: number, username: string, otpTTL: string) => {
   const today = new Date();
@@ -248,6 +250,8 @@ const sendOtpToEmail = async (email: string, username: string) => {
     const otp = generateOTP();
     const mailOptions = createEmailOptions(email, otp, username, "5 minutes");
     const mail = await transporter.sendMail(mailOptions);
+    const hashedOtp = await hashKey(otp.toString());
+    await saveOtpToRedis(email, hashedOtp);
     return mail.response;
   } catch (error) {
     throw error;
