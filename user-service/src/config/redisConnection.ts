@@ -1,12 +1,6 @@
-import {
-  createClient,
-  RedisClientType,
-  RedisFunctions,
-  RedisModules,
-  RedisScripts,
-} from "redis";
-type RedisClient = RedisClientType<RedisModules, RedisFunctions, RedisScripts>;
-let redisClient: RedisClient;
+import { createClient } from "redis";
+import { TRedisClient } from "../types";
+let redisClient: TRedisClient;
 
 const connectToRedis = async () => {
   const redisClient = await createClient()
@@ -15,7 +9,7 @@ const connectToRedis = async () => {
   return redisClient;
 };
 
-const getRedisClient = async (): Promise<RedisClient> => {
+const getRedisClient = async (): Promise<TRedisClient> => {
   if (!redisClient) {
     redisClient = await connectToRedis();
   }
