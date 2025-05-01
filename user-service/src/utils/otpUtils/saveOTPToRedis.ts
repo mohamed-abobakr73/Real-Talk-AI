@@ -1,7 +1,7 @@
 import redisUtils from "../redisUtils";
 
 const saveOtpToRedis = async (email: string, otp: string) => {
-  redisUtils.set(email, otp);
+  await redisUtils.set(email, otp, 5 * 60);
 };
 
 export default saveOtpToRedis;

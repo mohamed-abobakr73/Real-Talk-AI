@@ -9,8 +9,8 @@ let redisClient: any;
 })();
 
 const redisUtils = {
-  set: async (key: string, value: string) => {
-    await redisClient.set(key, value);
+  set: async (key: string, value: string, ttl?: number) => {
+    await redisClient.set(key, value, { EX: ttl });
   },
   get: async (key: string) => {
     return await redisClient.get(key);
