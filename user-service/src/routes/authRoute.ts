@@ -1,8 +1,9 @@
 import { Router } from "express";
-import { signup } from "../controllers/authController";
+import { signup, verifyOtp } from "../controllers/authController";
 import upload from "../config/multer";
 import validateRequestBody from "../middlewares/validateRequestBody";
 import { signupSchema } from "../schemas";
+import verifyOtpSchema from "../schemas/verifyOTPSchema";
 
 const authRouter = Router();
 
@@ -13,5 +14,9 @@ authRouter
     validateRequestBody(signupSchema),
     signup
   );
+
+authRouter
+  .route("/verify-otp")
+  .post(validateRequestBody(verifyOtpSchema), verifyOtp);
 
 export default authRouter;
