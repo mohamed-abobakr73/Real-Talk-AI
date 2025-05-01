@@ -5,8 +5,7 @@ import helmet from "helmet";
 import cors from "cors";
 import TGlobalError from "./types/TGlobalError";
 import httpStatusText from "./utils/httpStatusText";
-import usersRouter from "./routes/usersRoute";
-import authRouter from "./routes/authRoute";
+import { authRouter, usersRoute } from "./controllers";
 
 configDotenv();
 
@@ -17,7 +16,7 @@ app.use(morgan("dev"));
 app.use(cors());
 app.use(helmet());
 
-app.use("/v1/auth", authRouter);
+app.use("/api/v1/auth", authRouter);
 // app.use("/v1/users", usersRouter);
 
 app.use(
