@@ -4,7 +4,10 @@ import httpStatusText from "../utils/httpStatusText";
 
 const getUserService = async (email: string) => {
   try {
-    const user = await prisma.user.findUnique({ where: { email } });
+    const user = await prisma.user.findUnique({
+      where: { email },
+      omit: { password: true },
+    });
     if (!user) {
       const error = globalError.create(
         "User not found",
@@ -13,6 +16,7 @@ const getUserService = async (email: string) => {
       );
       throw error;
     }
+    return user;
   } catch (error) {
     throw error;
   }

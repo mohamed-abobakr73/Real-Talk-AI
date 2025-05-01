@@ -3,11 +3,11 @@ import compareHashedValues from "../hashingUtils/compareHashedValues";
 import httpStatusText from "../httpStatusText";
 import redisUtils from "../redisUtils";
 
-const verifyOtp = async (email: string, otp: string) => {
+const verifyOtpCode = async (email: string, otp: string) => {
   const hashedOtp = await redisUtils.get(email);
   if (!hashedOtp) {
     const error = globalError.create(
-      "Invalid email address or otp expired",
+      "OTP Code expired, please try again with a new OTP via the resend OTP",
       400,
       httpStatusText.FAIL
     );
@@ -17,4 +17,4 @@ const verifyOtp = async (email: string, otp: string) => {
   return isMatch;
 };
 
-export default verifyOtp;
+export default verifyOtpCode;

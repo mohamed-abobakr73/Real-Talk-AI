@@ -2,7 +2,6 @@ import { NextFunction, Request, Response } from "express";
 import asyncHandler from "../middlewares/asyncHandler";
 import authServices from "../services/authServices";
 import httpStatusText from "../utils/httpStatusText";
-import generateJWT from "../utils/jwtUtils/generateJWT";
 import sendOtpToEmail from "../utils/otpUtils/sendOtpToEmail";
 
 const signup = asyncHandler(
@@ -36,10 +35,20 @@ const signup = asyncHandler(
 );
 
 const verifyOtp = asyncHandler(async (req: Request, res: Response) => {
+  const validatedRequestBody = req.validatedData;
+  const { email, otp } = validatedRequestBody;
+
+  const otpVerificationResult = await authServices.verifyOtpService(email, otp);
+
+  const { user, token, refreshToken } = otpVerificationResult;
+
   return res.status(200).json({
     status: httpStatusText.SUCCESS,
     data: {
       message: "OTP verified successfully",
+      user,
+      token,
+      refreshToken,
     },
   });
 });

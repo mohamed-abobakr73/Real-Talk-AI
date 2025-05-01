@@ -21,6 +21,7 @@ model User {
   password String?
   oauthProvider oauthProvider?
   profileImage String? @default("https://ik.imagekit.io/RealTalk/tr:n-ik_ml_thumbnail/user-avatar_H3y7eWAOa.jpg")
+  verified Boolean? @default(false)
 }
 
 enum oauthProvider {

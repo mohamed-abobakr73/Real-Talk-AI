@@ -2,7 +2,7 @@ import { z } from "zod";
 import stringValidation from "../utils/zodValidationUtils/stringValidation";
 
 const verifyOtpSchema = z.object({
-  email: stringValidation("email").email("email must be a valid email address"),
+  email: stringValidation("email").email("Email must be a valid email address"),
   otp: z
     .number({ required_error: "OTP Code is required" })
     .int("OTP Code must be a valid number")
