@@ -42,13 +42,20 @@ const verifyOtp = asyncHandler(async (req: Request, res: Response) => {
 
   const { user, token, refreshToken } = otpVerificationResult;
 
+  res.cookie("refreshToken", refreshToken, {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+    path: "/",
+    maxAge: 30 * 24 * 60 * 60 * 1000,
+  });
+
   return res.status(200).json({
     status: httpStatusText.SUCCESS,
     data: {
       message: "OTP verified successfully",
       user,
       token,
-      refreshToken,
     },
   });
 });
