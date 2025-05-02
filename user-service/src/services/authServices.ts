@@ -24,7 +24,6 @@ const signupService = async (userData: User) => {
   }
 };
 
-//TODO update the user verified field to be true
 const verifyOtpService = async (email: string, otp: string) => {
   try {
     const user = (await usersServices.getUserService(email)) as User;

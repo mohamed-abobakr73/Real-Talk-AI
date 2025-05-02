@@ -6,6 +6,7 @@ import cors from "cors";
 import TGlobalError from "./types/TGlobalError";
 import httpStatusText from "./utils/httpStatusText";
 import { authRouter, usersRoute } from "./controllers";
+import verifyAccessToken from "./middlewares/verifyAccessToken";
 
 configDotenv();
 
