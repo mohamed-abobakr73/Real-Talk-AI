@@ -24,6 +24,7 @@ const signupService = async (userData: User) => {
   }
 };
 
+//TODO update the user verified field to be true
 const verifyOtpService = async (email: string, otp: string) => {
   try {
     const user = (await usersServices.getUserService(email)) as User;
@@ -38,6 +39,11 @@ const verifyOtpService = async (email: string, otp: string) => {
       throw error;
     }
 
+    const verifiedUser = await usersServices.updateUserService({
+      userId: user.userId,
+      verified: true,
+    });
+
     const tokenPayload = {
       id: user.userId,
       email: user.email,
@@ -46,7 +52,7 @@ const verifyOtpService = async (email: string, otp: string) => {
     const token = generateJWT(tokenPayload);
     const refreshToken = generateRefreshToken(tokenPayload);
 
-    return { user, token, refreshToken };
+    return { user: verifiedUser, token, refreshToken };
   } catch (error) {
     throw error;
   }

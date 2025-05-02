@@ -13,6 +13,7 @@ const verifyOtpCode = async (email: string, otp: string) => {
     );
     throw error;
   }
+
   const isMatch = await compareHashedValues(otp, hashedOtp);
   return isMatch;
 };
