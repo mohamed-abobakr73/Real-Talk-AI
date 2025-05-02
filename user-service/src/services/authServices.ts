@@ -115,9 +115,39 @@ const resendOtpService = async (email: string) => {
   }
 };
 
+const resetPasswordService = async (
+  email: string,
+  newPassword: string,
+  otp: string
+) => {
+  try {
+    const isMatch = await verifyOtpCode(email, otp);
+
+    if (!isMatch) {
+      const error = globalError.create(
+        "Invalid OTP Code",
+        400,
+        httpStatusText.FAIL
+      );
+      throw error;
+    }
+
+    const hashedPassword = await hashKey(newPassword);
+    const updatedUser = await prisma.user.update({
+      where: { email },
+      data: { password: hashedPassword },
+    });
+
+    return getTokensAfterRegistrationOrLogin(updatedUser);
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default {
   signupService,
   verifyOtpService,
   loginService,
   resendOtpService,
+  resetPasswordService,
 };

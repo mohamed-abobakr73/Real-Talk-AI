@@ -1,14 +1,16 @@
 import { Router } from "express";
 import {
+  forgotPassword,
   login,
   resendOtp,
+  resetPassword,
   signup,
   verifyOtp,
 } from "../controllers/authController";
 import upload from "../config/multer";
 import {
   loginSchema,
-  resendOtpSchema,
+  emailSchema,
   signupSchema,
   verifyOtpSchema,
 } from "../schemas";
@@ -16,6 +18,7 @@ import {
   validateRequestBody,
   verifyAccessOrRefreshToken,
 } from "../middlewares";
+import resetPasswordSchema from "../schemas/resetPasswordSchema";
 
 const authRouter = Router();
 
@@ -33,9 +36,18 @@ authRouter
 
 authRouter
   .route("/resend-otp")
-  .post(validateRequestBody(resendOtpSchema), resendOtp);
+  .post(validateRequestBody(emailSchema), resendOtp);
 
 authRouter.route("/refresh-token").post(verifyAccessOrRefreshToken("refresh"));
 
 authRouter.route("/login").post(validateRequestBody(loginSchema), login);
+
+authRouter
+  .route("/forgot-password")
+  .post(validateRequestBody(emailSchema), forgotPassword);
+
+authRouter
+  .route("/reset-password")
+  .post(validateRequestBody(resetPasswordSchema), resetPassword);
+
 export default authRouter;

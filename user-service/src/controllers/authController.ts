@@ -4,6 +4,7 @@ import httpStatusText from "../utils/httpStatusText";
 import sendOtpToEmail from "../utils/otpUtils/sendOtpToEmail";
 import { sendRefreshTokenToCookies } from "../utils/jwtUtils";
 import { asyncHandler } from "../middlewares";
+import usersServices from "../services/usersServices";
 
 const signup = asyncHandler(
   async (
@@ -28,60 +29,111 @@ const signup = asyncHandler(
   }
 );
 
-const verifyOtp = asyncHandler(async (req: Request, res: Response) => {
+const verifyOtp = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const validatedRequestBody = req.validatedData;
+    const { email, otp } = validatedRequestBody;
+
+    const otpVerificationResult = await authServices.verifyOtpService(
+      email,
+      otp
+    );
+
+    const { user, token, refreshToken } = otpVerificationResult;
+
+    sendRefreshTokenToCookies(res, refreshToken);
+
+    return res.status(200).json({
+      status: httpStatusText.SUCCESS,
+      data: {
+        message: "OTP verified successfully",
+        user,
+        token,
+      },
+    });
+  }
+);
+
+const login = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const validatedRequestBody = req.validatedData;
+    const { email, password } = validatedRequestBody;
+
+    const loginResult = await authServices.loginService(email, password);
+
+    const { user, token, refreshToken } = loginResult;
+
+    sendRefreshTokenToCookies(res, refreshToken);
+
+    return res.status(200).json({
+      status: httpStatusText.SUCCESS,
+      data: {
+        message: "Login successful",
+        user,
+        token,
+      },
+    });
+  }
+);
+
+const resendOtp = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const validatedRequestBody = req.validatedData;
+    const { email } = validatedRequestBody;
+
+    const user = await authServices.resendOtpService(email);
+
+    const sendEmail = await sendOtpToEmail(email, user.username);
+
+    return res.status(200).json({
+      status: httpStatusText.SUCCESS,
+      data: {
+        message: `OTP resent successfully to ${email}`,
+      },
+    });
+  }
+);
+
+const forgotPassword = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const validatedRequestBody = req.validatedData;
+    const { email } = validatedRequestBody;
+
+    const user = await usersServices.getUserService(email);
+
+    const sendEmail = await sendOtpToEmail(email, user.username);
+
+    return res.status(200).json({
+      status: httpStatusText.SUCCESS,
+      data: {
+        message: `OTP code has been sent to successfully to ${email}, please use it to reset your password`,
+      },
+    });
+  }
+);
+
+const resetPassword = asyncHandler(async (req: Request, res: Response) => {
   const validatedRequestBody = req.validatedData;
-  const { email, otp } = validatedRequestBody;
+  const { email, otp, newPassword } = validatedRequestBody;
 
-  const otpVerificationResult = await authServices.verifyOtpService(email, otp);
+  const resetPasswordResult = await authServices.resetPasswordService(
+    email,
+    newPassword,
+    otp
+  );
 
-  const { user, token, refreshToken } = otpVerificationResult;
+  const { user, token, refreshToken } = resetPasswordResult;
 
   sendRefreshTokenToCookies(res, refreshToken);
 
   return res.status(200).json({
     status: httpStatusText.SUCCESS,
     data: {
-      message: "OTP verified successfully",
+      message: "Password reset successfully",
       user,
       token,
     },
   });
 });
 
-const login = asyncHandler(async (req: Request, res: Response) => {
-  const validatedRequestBody = req.validatedData;
-  const { email, password } = validatedRequestBody;
-
-  const loginResult = await authServices.loginService(email, password);
-
-  const { user, token, refreshToken } = loginResult;
-
-  sendRefreshTokenToCookies(res, refreshToken);
-
-  return res.status(200).json({
-    status: httpStatusText.SUCCESS,
-    data: {
-      message: "Login successful",
-      user,
-      token,
-    },
-  });
-});
-
-const resendOtp = asyncHandler(async (req: Request, res: Response) => {
-  const validatedRequestBody = req.validatedData;
-  const { email } = validatedRequestBody;
-
-  const user = await authServices.resendOtpService(email);
-
-  const sendEmail = await sendOtpToEmail(email, user.username);
-
-  return res.status(200).json({
-    status: httpStatusText.SUCCESS,
-    data: {
-      message: `OTP resent successfully to ${email}`,
-    },
-  });
-});
-
-export { signup, verifyOtp, login, resendOtp };
+export { signup, verifyOtp, login, resendOtp, forgotPassword, resetPassword };
