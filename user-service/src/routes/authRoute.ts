@@ -1,10 +1,11 @@
 import { Router } from "express";
-import { signup, verifyOtp } from "../controllers/authController";
+import { login, signup, verifyOtp } from "../controllers/authController";
 import upload from "../config/multer";
-import validateRequestBody from "../middlewares/validateRequestBody";
-import { signupSchema } from "../schemas";
-import verifyOtpSchema from "../schemas/verifyOTPSchema";
-import verifyAccessOrRefreshToken from "../middlewares/verifyAccessOrRefreshToken";
+import { loginSchema, signupSchema, verifyOtpSchema } from "../schemas";
+import {
+  validateRequestBody,
+  verifyAccessOrRefreshToken,
+} from "../middlewares";
 
 const authRouter = Router();
 
@@ -21,4 +22,6 @@ authRouter
   .post(validateRequestBody(verifyOtpSchema), verifyOtp);
 
 authRouter.route("/refresh-token").post(verifyAccessOrRefreshToken("refresh"));
+
+authRouter.route("/login").post(validateRequestBody(loginSchema), login);
 export default authRouter;

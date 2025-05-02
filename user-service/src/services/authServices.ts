@@ -4,9 +4,10 @@ import uploadToImageKit from "../utils/uploadToImageKit";
 import hashKey from "../utils/hashingUtils/hashKey";
 import usersServices from "./usersServices";
 import verifyOtpCode from "../utils/otpUtils/verifyOTPCode";
-import { generateJWT, generateRefreshToken } from "../utils/jwtUtils";
+import { getTokensAfterRegistrationOrLogin } from "../utils/jwtUtils";
 import globalError from "../utils/globalError";
 import httpStatusText from "../utils/httpStatusText";
+import compareHashedValues from "../utils/hashingUtils/compareHashedValues";
 
 const signupService = async (userData: User) => {
   try {
@@ -53,16 +54,44 @@ const verifyOtpService = async (email: string, otp: string) => {
       verified: true,
     });
 
-    const tokenPayload = {
-      id: user.userId,
-      username: user.username,
-      email: user.email,
-    };
+    return getTokensAfterRegistrationOrLogin(verifiedUser);
+  } catch (error) {
+    throw error;
+  }
+};
 
-    const token = generateJWT(tokenPayload);
-    const refreshToken = generateRefreshToken(tokenPayload);
+const loginService = async (email: string, password: string) => {
+  try {
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user) {
+      const error = globalError.create(
+        "Invalid credentials",
+        404,
+        httpStatusText.NOT_FOUND
+      );
+      throw error;
+    }
 
-    return { user: verifiedUser, token, refreshToken };
+    if (!user.verified) {
+      const error = globalError.create(
+        "User is not verified, please verify your account first then try to login",
+        401,
+        httpStatusText.FAIL
+      );
+      throw error;
+    }
+
+    const passwordMatch = await compareHashedValues(password, user.password!);
+    if (!passwordMatch) {
+      const error = globalError.create(
+        "Invalid credentials",
+        401,
+        httpStatusText.FAIL
+      );
+      throw error;
+    }
+
+    return getTokensAfterRegistrationOrLogin(user);
   } catch (error) {
     throw error;
   }
@@ -71,4 +100,5 @@ const verifyOtpService = async (email: string, otp: string) => {
 export default {
   signupService,
   verifyOtpService,
+  loginService,
 };

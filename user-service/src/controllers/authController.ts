@@ -1,8 +1,9 @@
 import { NextFunction, Request, Response } from "express";
-import asyncHandler from "../middlewares/asyncHandler";
 import authServices from "../services/authServices";
 import httpStatusText from "../utils/httpStatusText";
 import sendOtpToEmail from "../utils/otpUtils/sendOtpToEmail";
+import { sendRefreshTokenToCookies } from "../utils/jwtUtils";
+import { asyncHandler } from "../middlewares";
 
 const signup = asyncHandler(
   async (
@@ -42,13 +43,7 @@ const verifyOtp = asyncHandler(async (req: Request, res: Response) => {
 
   const { user, token, refreshToken } = otpVerificationResult;
 
-  res.cookie("refreshToken", refreshToken, {
-    httpOnly: true,
-    secure: true,
-    sameSite: "none",
-    path: "/",
-    maxAge: 30 * 24 * 60 * 60 * 1000,
-  });
+  sendRefreshTokenToCookies(res, refreshToken);
 
   return res.status(200).json({
     status: httpStatusText.SUCCESS,
@@ -60,4 +55,24 @@ const verifyOtp = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
-export { signup, verifyOtp };
+const login = asyncHandler(async (req: Request, res: Response) => {
+  const validatedRequestBody = req.validatedData;
+  const { email, password } = validatedRequestBody;
+
+  const loginResult = await authServices.loginService(email, password);
+
+  const { user, token, refreshToken } = loginResult;
+
+  sendRefreshTokenToCookies(res, refreshToken);
+
+  return res.status(200).json({
+    status: httpStatusText.SUCCESS,
+    data: {
+      message: "Login successful",
+      user,
+      token,
+    },
+  });
+});
+
+export { signup, verifyOtp, login };
