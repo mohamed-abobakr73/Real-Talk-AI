@@ -28,6 +28,16 @@ const signupService = async (userData: User) => {
 const verifyOtpService = async (email: string, otp: string) => {
   try {
     const user = (await usersServices.getUserService(email)) as User;
+
+    if (user.verified) {
+      const error = globalError.create(
+        "User already verified",
+        400,
+        httpStatusText.FAIL
+      );
+      throw error;
+    }
+
     const isMatch = await verifyOtpCode(email, otp);
 
     if (!isMatch) {
