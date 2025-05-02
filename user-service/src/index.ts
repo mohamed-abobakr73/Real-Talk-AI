@@ -3,22 +3,37 @@ import { configDotenv } from "dotenv";
 import morgan from "morgan";
 import helmet from "helmet";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 import TGlobalError from "./types/TGlobalError";
 import httpStatusText from "./utils/httpStatusText";
 import { authRouter, usersRoute } from "./controllers";
-import verifyAccessToken from "./middlewares/verifyAccessToken";
+import verifyAccessOrRefreshToken from "./middlewares/verifyAccessOrRefreshToken";
 
 configDotenv();
 
 const app = express();
 
 app.use(express.json());
+app.use(cookieParser());
 app.use(morgan("dev"));
 app.use(cors());
 app.use(helmet());
 
 app.use("/api/v1/auth", authRouter);
 // app.use("/v1/users", usersRouter);
+
+app.get(
+  "/verify-token",
+  verifyAccessOrRefreshToken("refresh"),
+  (req: Request, res: Response) => {
+    res.status(200).json({
+      status: httpStatusText.SUCCESS,
+      data: {
+        message: "Token verified successfully",
+      },
+    });
+  }
+);
 
 app.use(
   (error: TGlobalError, req: Request, res: Response, next: NextFunction) => {

@@ -7,7 +7,7 @@ configDotenv();
 const generateJWT = (payload: JwtPayload) => {
   const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
   const token = jwt.sign(payload, JWT_SECRET_KEY!, {
-    expiresIn: "30h",
+    expiresIn: "30m",
   });
   return token;
 };

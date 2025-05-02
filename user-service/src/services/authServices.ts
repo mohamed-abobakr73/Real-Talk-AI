@@ -55,6 +55,7 @@ const verifyOtpService = async (email: string, otp: string) => {
 
     const tokenPayload = {
       id: user.userId,
+      username: user.username,
       email: user.email,
     };
 
