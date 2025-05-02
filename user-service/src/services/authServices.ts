@@ -97,8 +97,27 @@ const loginService = async (email: string, password: string) => {
   }
 };
 
+const resendOtpService = async (email: string) => {
+  try {
+    const user = await usersServices.getUserService(email);
+    if (user.verified) {
+      const error = globalError.create(
+        "User already verified",
+        400,
+        httpStatusText.FAIL
+      );
+      throw error;
+    }
+
+    return user;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default {
   signupService,
   verifyOtpService,
   loginService,
+  resendOtpService,
 };

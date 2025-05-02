@@ -17,13 +17,6 @@ const signup = asyncHandler(
 
     const createdUser = await authServices.signupService(validatedRequestBody);
 
-    // const tokenPayload = {
-    //   id: createdUser.userId,
-    //   email: createdUser.email,
-    // };
-
-    // const token = generateJWT(tokenPayload);
-
     const sendEmail = await sendOtpToEmail(email, username);
 
     return res.status(201).json({
@@ -75,4 +68,20 @@ const login = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
-export { signup, verifyOtp, login };
+const resendOtp = asyncHandler(async (req: Request, res: Response) => {
+  const validatedRequestBody = req.validatedData;
+  const { email } = validatedRequestBody;
+
+  const user = await authServices.resendOtpService(email);
+
+  const sendEmail = await sendOtpToEmail(email, user.username);
+
+  return res.status(200).json({
+    status: httpStatusText.SUCCESS,
+    data: {
+      message: `OTP resent successfully to ${email}`,
+    },
+  });
+});
+
+export { signup, verifyOtp, login, resendOtp };

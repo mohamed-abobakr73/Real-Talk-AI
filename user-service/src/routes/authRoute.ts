@@ -1,7 +1,17 @@
 import { Router } from "express";
-import { login, signup, verifyOtp } from "../controllers/authController";
+import {
+  login,
+  resendOtp,
+  signup,
+  verifyOtp,
+} from "../controllers/authController";
 import upload from "../config/multer";
-import { loginSchema, signupSchema, verifyOtpSchema } from "../schemas";
+import {
+  loginSchema,
+  resendOtpSchema,
+  signupSchema,
+  verifyOtpSchema,
+} from "../schemas";
 import {
   validateRequestBody,
   verifyAccessOrRefreshToken,
@@ -20,6 +30,10 @@ authRouter
 authRouter
   .route("/verify-otp")
   .post(validateRequestBody(verifyOtpSchema), verifyOtp);
+
+authRouter
+  .route("/resend-otp")
+  .post(validateRequestBody(resendOtpSchema), resendOtp);
 
 authRouter.route("/refresh-token").post(verifyAccessOrRefreshToken("refresh"));
 

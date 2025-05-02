@@ -1,4 +1,5 @@
 import signupSchema from "./signupSchema";
 import verifyOtpSchema from "./verifyOTPSchema";
 import loginSchema from "./loginSchema";
-export { signupSchema, loginSchema, verifyOtpSchema };
+import resendOtpSchema from "./resendOTPSchema";
+export { signupSchema, loginSchema, verifyOtpSchema, resendOtpSchema };

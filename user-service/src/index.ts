@@ -6,8 +6,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import TGlobalError from "./types/TGlobalError";
 import httpStatusText from "./utils/httpStatusText";
-import { authRouter, usersRoute } from "./controllers";
-import verifyAccessOrRefreshToken from "./middlewares/verifyAccessOrRefreshToken";
+import { authRouter } from "./routes";
 
 configDotenv();
 
@@ -21,19 +20,6 @@ app.use(helmet());
 
 app.use("/api/v1/auth", authRouter);
 // app.use("/v1/users", usersRouter);
-
-app.get(
-  "/verify-token",
-  verifyAccessOrRefreshToken("refresh"),
-  (req: Request, res: Response) => {
-    res.status(200).json({
-      status: httpStatusText.SUCCESS,
-      data: {
-        message: "Token verified successfully",
-      },
-    });
-  }
-);
 
 app.use(
   (error: TGlobalError, req: Request, res: Response, next: NextFunction) => {
