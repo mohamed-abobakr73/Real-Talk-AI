@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+  changeEmail,
   forgotPassword,
   login,
   resendOtp,
@@ -19,6 +20,7 @@ import {
   verifyAccessOrRefreshToken,
 } from "../middlewares";
 import resetPasswordSchema from "../schemas/resetPasswordSchema";
+import changeEmailSchema from "../schemas/changeEmailSchema";
 
 const authRouter = Router();
 
@@ -49,5 +51,13 @@ authRouter
 authRouter
   .route("/reset-password")
   .post(validateRequestBody(resetPasswordSchema), resetPassword);
+
+authRouter
+  .route("/change-email")
+  .post(
+    verifyAccessOrRefreshToken("access"),
+    validateRequestBody(changeEmailSchema),
+    changeEmail
+  );
 
 export default authRouter;

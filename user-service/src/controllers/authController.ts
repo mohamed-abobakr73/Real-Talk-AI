@@ -112,28 +112,61 @@ const forgotPassword = asyncHandler(
   }
 );
 
-const resetPassword = asyncHandler(async (req: Request, res: Response) => {
-  const validatedRequestBody = req.validatedData;
-  const { email, otp, newPassword } = validatedRequestBody;
+const resetPassword = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const validatedRequestBody = req.validatedData;
+    const { email, otp, newPassword } = validatedRequestBody;
 
-  const resetPasswordResult = await authServices.resetPasswordService(
-    email,
-    newPassword,
-    otp
-  );
+    const resetPasswordResult = await authServices.resetPasswordService(
+      email,
+      newPassword,
+      otp
+    );
 
-  const { user, token, refreshToken } = resetPasswordResult;
+    const { user, token, refreshToken } = resetPasswordResult;
 
-  sendRefreshTokenToCookies(res, refreshToken);
+    sendRefreshTokenToCookies(res, refreshToken);
 
-  return res.status(200).json({
-    status: httpStatusText.SUCCESS,
-    data: {
-      message: "Password reset successfully",
-      user,
-      token,
-    },
-  });
-});
+    return res.status(200).json({
+      status: httpStatusText.SUCCESS,
+      data: {
+        message: "Password reset successfully",
+        user,
+        token,
+      },
+    });
+  }
+);
 
-export { signup, verifyOtp, login, resendOtp, forgotPassword, resetPassword };
+const changeEmail = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const validatedRequestBody = req.validatedData;
+    const { newEmail } = validatedRequestBody;
+    const oldEmail = req.user?.email as string;
+
+    const updatedUser = await authServices.changeEmailService(
+      oldEmail,
+      newEmail
+    );
+
+    const sendEmail = sendOtpToEmail(newEmail, updatedUser.username);
+
+    return res.status(200).json({
+      status: httpStatusText.SUCCESS,
+      data: {
+        message: `Email changed successfully, And OTP code sent to ${newEmail} for verification`,
+        user: updatedUser,
+      },
+    });
+  }
+);
+
+export {
+  signup,
+  verifyOtp,
+  login,
+  resendOtp,
+  forgotPassword,
+  resetPassword,
+  changeEmail,
+};

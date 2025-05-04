@@ -144,10 +144,20 @@ const resetPasswordService = async (
   }
 };
 
+const changeEmailService = async (oldEmail: string, newEmail: string) => {
+  const updatedUser = await prisma.user.update({
+    where: { email: oldEmail },
+    data: { email: newEmail, verified: false },
+  });
+
+  return updatedUser;
+};
+
 export default {
   signupService,
   verifyOtpService,
   loginService,
   resendOtpService,
   resetPasswordService,
+  changeEmailService,
 };

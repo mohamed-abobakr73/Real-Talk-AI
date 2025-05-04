@@ -9,7 +9,7 @@ import httpStatusText from "./utils/httpStatusText";
 import { authRouter } from "./routes";
 
 configDotenv();
-
+// TODO DON"T RETURN THE PASSWORD WITH THE USER IN RESPONSES
 const app = express();
 
 app.use(express.json());
