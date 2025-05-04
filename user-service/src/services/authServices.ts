@@ -14,14 +14,20 @@ import { TNewUser } from "../types";
 const signupService = async (userData: TNewUser) => {
   try {
     const { password, profileImage, username } = userData;
-    const hashedPassword = await hashKey(password!);
-    userData.password = hashedPassword;
+
+    if (password) {
+      const hashedPassword = await hashKey(password!);
+      userData.password = hashedPassword;
+    }
+
     if (profileImage) {
       const image = await uploadToImageKit(profileImage, username!);
       userData.profileImage = image.url;
     }
+
     const user = await prisma.user.create({ data: userData });
     const userSafeData = sanitizeUser(user);
+
     return userSafeData;
   } catch (error) {
     throw error;

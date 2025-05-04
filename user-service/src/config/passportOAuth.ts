@@ -1,9 +1,7 @@
 import { configDotenv } from "dotenv";
+import { Strategy as GoogleStrategy } from "passport-google-oauth2";
 import { Request } from "express";
 import passport, { Profile } from "passport";
-import { Strategy as GoogleStrategy } from "passport-google-oauth2";
-import prisma from "./prismaClient";
-import authServices from "../services/authServices";
 
 configDotenv();
 
@@ -27,7 +25,8 @@ passport.use(
       done: (err: any, user?: any) => void
     ) => {
       try {
-        return done(null, null); // successful
+        request.profile = profile;
+        return done(null, profile); // successful
       } catch (err) {
         return done(err); // error occurred
       }

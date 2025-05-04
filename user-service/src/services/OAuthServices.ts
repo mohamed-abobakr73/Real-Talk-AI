@@ -97,6 +97,7 @@ const googleAuthService = async (profile: Profile) => {
   }
 
   await createAuthProviderService(authProviderData!);
+  return userAlreadyExists;
 };
 
 export default { googleAuthService };

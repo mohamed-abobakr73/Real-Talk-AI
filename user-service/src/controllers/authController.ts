@@ -6,6 +6,7 @@ import { sendRefreshTokenToCookies } from "../utils/jwtUtils";
 import { asyncHandler } from "../middlewares";
 import usersServices from "../services/usersServices";
 import "../types/express";
+import OAuthServices from "../services/OAuthServices";
 
 const signup = asyncHandler(
   async (
@@ -143,7 +144,7 @@ const changeEmail = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const validatedRequestBody = req.validatedData;
     const { newEmail } = validatedRequestBody;
-    const oldEmail = req.user?.email;
+    const oldEmail = req.currentUser?.email;
 
     const updatedUser = await authServices.changeEmailService(
       oldEmail!,
@@ -162,6 +163,22 @@ const changeEmail = asyncHandler(
   }
 );
 
+const googleAuth = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const profile = req.profile;
+
+    const user = await OAuthServices.googleAuthService(profile!);
+
+    return res.status(200).json({
+      status: httpStatusText.SUCCESS,
+      data: {
+        message: "Login successful",
+        user,
+      },
+    });
+  }
+);
+
 export {
   signup,
   verifyOtp,
@@ -170,4 +187,5 @@ export {
   forgotPassword,
   resetPassword,
   changeEmail,
+  googleAuth,
 };
