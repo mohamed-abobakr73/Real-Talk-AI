@@ -5,6 +5,7 @@ import sendOtpToEmail from "../utils/otpUtils/sendOtpToEmail";
 import { sendRefreshTokenToCookies } from "../utils/jwtUtils";
 import { asyncHandler } from "../middlewares";
 import usersServices from "../services/usersServices";
+import "../types/express";
 
 const signup = asyncHandler(
   async (
@@ -142,10 +143,10 @@ const changeEmail = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const validatedRequestBody = req.validatedData;
     const { newEmail } = validatedRequestBody;
-    const oldEmail = req.user?.email as string;
+    const oldEmail = req.user?.email;
 
     const updatedUser = await authServices.changeEmailService(
-      oldEmail,
+      oldEmail!,
       newEmail
     );
 
