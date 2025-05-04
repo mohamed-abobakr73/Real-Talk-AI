@@ -9,14 +9,15 @@ import globalError from "../utils/globalError";
 import httpStatusText from "../utils/httpStatusText";
 import compareHashedValues from "../utils/hashingUtils/compareHashedValues";
 import sanitizeUser from "../utils/sanitizeUser";
+import { TNewUser } from "../types";
 
-const signupService = async (userData: User) => {
+const signupService = async (userData: TNewUser) => {
   try {
     const { password, profileImage, username } = userData;
     const hashedPassword = await hashKey(password!);
     userData.password = hashedPassword;
     if (profileImage) {
-      const image = await uploadToImageKit(profileImage, username);
+      const image = await uploadToImageKit(profileImage, username!);
       userData.profileImage = image.url;
     }
     const user = await prisma.user.create({ data: userData });

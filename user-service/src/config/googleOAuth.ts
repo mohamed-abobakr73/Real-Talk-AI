@@ -2,6 +2,8 @@ import { configDotenv } from "dotenv";
 import { Request } from "express";
 import passport, { Profile } from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth2";
+import prisma from "./prismaClient";
+import authServices from "../services/authServices";
 
 configDotenv();
 
@@ -17,7 +19,7 @@ passport.use(
       callbackURL: GOOGLE_CALL_BACK_URL,
       passReqToCallback: true,
     },
-    (
+    async (
       request: Request,
       accessToken: string,
       refreshToken: string,
@@ -25,15 +27,7 @@ passport.use(
       done: (err: any, user?: any) => void
     ) => {
       try {
-        const user = {
-          googleId: profile.id,
-          displayName: profile.displayName,
-          email: profile.emails?.[0]?.value,
-          username: profile.displayName ?? null,
-          picture: profile.photos?.[0]?.value ?? null,
-        };
-
-        return done(null, user); // successful
+        return done(null, null); // successful
       } catch (err) {
         return done(err); // error occurred
       }
