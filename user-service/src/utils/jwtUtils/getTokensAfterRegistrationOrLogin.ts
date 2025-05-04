@@ -2,7 +2,7 @@ import { User } from "../../generated/prisma";
 import generateJWT from "./generateJWT";
 import generateRefreshToken from "./generateRefreshToken";
 
-const getTokensAfterRegistrationOrLogin = (user: User) => {
+const getTokensAfterRegistrationOrLogin = (user: Partial<User>) => {
   const tokenPayload = {
     id: user.userId,
     username: user.username,

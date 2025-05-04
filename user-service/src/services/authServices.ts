@@ -8,6 +8,7 @@ import { getTokensAfterRegistrationOrLogin } from "../utils/jwtUtils";
 import globalError from "../utils/globalError";
 import httpStatusText from "../utils/httpStatusText";
 import compareHashedValues from "../utils/hashingUtils/compareHashedValues";
+import sanitizeUser from "../utils/sanitizeUser";
 
 const signupService = async (userData: User) => {
   try {
@@ -19,7 +20,8 @@ const signupService = async (userData: User) => {
       userData.profileImage = image.url;
     }
     const user = await prisma.user.create({ data: userData });
-    return user;
+    const userSafeData = sanitizeUser(user);
+    return userSafeData;
   } catch (error) {
     throw error;
   }
@@ -90,8 +92,8 @@ const loginService = async (email: string, password: string) => {
       );
       throw error;
     }
-
-    return getTokensAfterRegistrationOrLogin(user);
+    const userSafeData = sanitizeUser(user);
+    return getTokensAfterRegistrationOrLogin(userSafeData);
   } catch (error) {
     throw error;
   }
@@ -136,6 +138,7 @@ const resetPasswordService = async (
     const updatedUser = await prisma.user.update({
       where: { email },
       data: { password: hashedPassword },
+      omit: { password: true },
     });
 
     return getTokensAfterRegistrationOrLogin(updatedUser);
