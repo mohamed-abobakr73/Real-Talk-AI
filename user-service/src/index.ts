@@ -3,20 +3,23 @@ import { configDotenv } from "dotenv";
 import morgan from "morgan";
 import helmet from "helmet";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 import TGlobalError from "./types/TGlobalError";
 import httpStatusText from "./utils/httpStatusText";
-import usersRouter from "./routes/usersRoute";
+import { authRouter } from "./routes";
 
 configDotenv();
-
+// TODO DON"T RETURN THE PASSWORD WITH THE USER IN RESPONSES
 const app = express();
 
 app.use(express.json());
+app.use(cookieParser());
 app.use(morgan("dev"));
 app.use(cors());
 app.use(helmet());
 
-app.use("/users", usersRouter);
+app.use("/api/v1/auth", authRouter);
+// app.use("/v1/users", usersRouter);
 
 app.use(
   (error: TGlobalError, req: Request, res: Response, next: NextFunction) => {
