@@ -2,6 +2,7 @@ import { Profile } from "passport";
 import { TAuthProvider, TNewUser } from "../types";
 import prisma from "../config/prismaClient";
 import authServices from "./authServices";
+import { AuthProviderType } from "../generated/prisma";
 
 const createAuthProviderService = async (authProviderData: TAuthProvider) => {
   try {
@@ -30,7 +31,6 @@ const checkIfUserAlreadyExists = async (email: string, profile: Profile) => {
     profileImage: profile.photos?.[0]?.value,
     verified: true,
   };
-  console.log("User Profile Image", userData.profileImage);
   return { userAlreadyExists, userData };
 };
 
@@ -41,7 +41,7 @@ const createUserAndAuthProviderIfDoesNotExists = async (
   const user = await authServices.signupService(userData);
 
   const authProviderData: TAuthProvider = {
-    provider: "google",
+    provider: profile.provider as AuthProviderType,
     authProviderId: profile.id,
     userId: user.userId,
   };
@@ -51,11 +51,11 @@ const createUserAndAuthProviderIfDoesNotExists = async (
 };
 
 const checkIfAuthProviderExists = async (userId: string, profile: Profile) => {
-  const provider = "google";
+  const provider = profile.provider as AuthProviderType;
   const authProviderId = profile.id;
 
   const authProvider = await prisma.authProviders.findFirst({
-    where: { authProviderId, provider: provider },
+    where: { authProviderId, provider },
   });
 
   if (authProvider) {
@@ -63,7 +63,7 @@ const checkIfAuthProviderExists = async (userId: string, profile: Profile) => {
   }
 
   const authProviderData: TAuthProvider = {
-    provider: "google",
+    provider,
     authProviderId,
     userId,
   };
@@ -71,7 +71,7 @@ const checkIfAuthProviderExists = async (userId: string, profile: Profile) => {
   return { authProvider, authProviderData };
 };
 
-const googleAuthService = async (profile: Profile) => {
+const oAuthService = async (profile: Profile) => {
   const email: string = profile.emails?.[0]?.value!;
   const { userAlreadyExists, userData } = await checkIfUserAlreadyExists(
     email,
@@ -101,4 +101,4 @@ const googleAuthService = async (profile: Profile) => {
   return userAlreadyExists;
 };
 
-export default { googleAuthService };
+export default { oAuthService };

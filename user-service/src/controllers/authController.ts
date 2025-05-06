@@ -163,11 +163,11 @@ const changeEmail = asyncHandler(
   }
 );
 
-const googleAuth = asyncHandler(
+const oAuth = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const profile = req.profile;
-
-    const user = await OAuthServices.googleAuthService(profile!);
+    console.log(profile?.provider);
+    const user = await OAuthServices.oAuthService(profile!);
 
     return res.status(200).json({
       status: httpStatusText.SUCCESS,
@@ -187,5 +187,5 @@ export {
   forgotPassword,
   resetPassword,
   changeEmail,
-  googleAuth,
+  oAuth,
 };

@@ -1,5 +1,7 @@
+import { AuthProviderType } from "../generated/prisma";
+
 type TAuthProvider = {
-  provider: "google" | "github";
+  provider: AuthProviderType;
   authProviderId: string;
   userId: string;
 };

@@ -2,8 +2,8 @@ import { Router } from "express";
 import {
   changeEmail,
   forgotPassword,
-  googleAuth,
   login,
+  oAuth,
   resendOtp,
   resetPassword,
   signup,
@@ -67,7 +67,6 @@ authRouter.route("/google").get(
     session: false,
     scope: ["email", "profile"],
   })
-  // googleAuth
 );
 
 authRouter.route("/google/callback").get(
@@ -75,7 +74,22 @@ authRouter.route("/google/callback").get(
     session: false,
     // failureRedirect: "/auth",
   }),
-  googleAuth
+  oAuth
+);
+
+authRouter.route("/github").get(
+  passport.authenticate("github", {
+    session: false,
+    scope: ["email", "profile"],
+  })
+);
+
+authRouter.route("/github/callback").get(
+  passport.authenticate("github", {
+    session: false,
+    // failureRedirect: "/auth",
+  }),
+  oAuth
 );
 
 export default authRouter;
