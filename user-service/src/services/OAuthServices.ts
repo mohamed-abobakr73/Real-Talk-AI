@@ -3,6 +3,7 @@ import { TAuthProvider, TNewUser } from "../types";
 import prisma from "../config/prismaClient";
 import authServices from "./authServices";
 import { AuthProviderType } from "../generated/prisma";
+import { getTokensAfterRegistrationOrLogin } from "../utils/jwtUtils";
 
 const createAuthProviderService = async (authProviderData: TAuthProvider) => {
   try {
@@ -83,7 +84,7 @@ const oAuthService = async (profile: Profile) => {
       userData!,
       profile
     );
-    return user;
+    return getTokensAfterRegistrationOrLogin(user);
   }
 
   const userId = userAlreadyExists.userId;
@@ -94,11 +95,11 @@ const oAuthService = async (profile: Profile) => {
   );
 
   if (authProvider) {
-    return;
+    return getTokensAfterRegistrationOrLogin(userAlreadyExists);
   }
 
   await createAuthProviderService(authProviderData!);
-  return userAlreadyExists;
+  return getTokensAfterRegistrationOrLogin(userAlreadyExists);
 };
 
 export default { oAuthService };
