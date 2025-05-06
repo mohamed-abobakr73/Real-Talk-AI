@@ -4,7 +4,7 @@ import generateRefreshToken from "./generateRefreshToken";
 
 const getTokensAfterRegistrationOrLogin = (user: Partial<User>) => {
   const tokenPayload = {
-    id: user.userId,
+    userId: user.userId,
     username: user.username,
     email: user.email,
   };

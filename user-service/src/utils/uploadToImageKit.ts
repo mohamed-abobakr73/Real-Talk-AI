@@ -1,6 +1,9 @@
 import imagekitClient from "../config/imageKit";
 
-const uploadToImageKit = async (fileBuffer: string, username: string) => {
+const uploadToImageKit = async (
+  fileBuffer: string,
+  username: string = "user"
+) => {
   const image = await imagekitClient.upload({
     file: Buffer.from(fileBuffer),
     fileName: `${username} ${Date.now()}`,

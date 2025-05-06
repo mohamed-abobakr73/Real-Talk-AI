@@ -77,7 +77,7 @@ const verifyOtpService = async (email: string, otp: string) => {
 const loginService = async (email: string, password: string) => {
   try {
     const user = await prisma.user.findUnique({ where: { email } });
-    if (!user) {
+    if (!user || !user.password) {
       const error = globalError.create(
         "Invalid credentials",
         404,
@@ -104,6 +104,7 @@ const loginService = async (email: string, password: string) => {
       );
       throw error;
     }
+
     const userSafeData = sanitizeUser(user);
     return getTokensAfterRegistrationOrLogin(userSafeData);
   } catch (error) {

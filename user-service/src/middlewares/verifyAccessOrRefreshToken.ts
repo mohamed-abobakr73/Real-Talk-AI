@@ -25,7 +25,7 @@ const verifyAccessOrRefreshToken = (typeOfToken: TTypeOfToken) => {
       };
 
       if (typeOfToken === "access") {
-        req.user = currentUser;
+        req.currentUser = currentUser;
         next();
       } else {
         const accessToken = generateJWT(currentUser as TCurrentUser);

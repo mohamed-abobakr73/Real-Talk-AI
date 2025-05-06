@@ -32,14 +32,16 @@ const updateUserService = async (fields: Partial<User>) => {
     const { profileImage } = rest;
 
     if (profileImage) {
-      const image = await uploadToImageKit(profileImage, email!);
+      const image = await uploadToImageKit(profileImage, rest.username || "");
       rest.profileImage = image.url;
     }
 
     const user = await prisma.user.update({
       where: { userId: userId },
       data: rest,
+      omit: { password: true },
     });
+
     if (!user) {
       const error = globalError.create(
         "User not found",
