@@ -3,7 +3,7 @@ import imagekitClient from "../config/imageKit";
 const uploadToImageKit = async (fileBuffer: string, username: string) => {
   const image = await imagekitClient.upload({
     file: Buffer.from(fileBuffer),
-    fileName: `${username} ${Date.now()}.jpg`,
+    fileName: `${username} ${Date.now()}`,
     extensions: [
       {
         name: "google-auto-tagging",

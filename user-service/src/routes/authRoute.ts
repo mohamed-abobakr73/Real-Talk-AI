@@ -3,6 +3,7 @@ import {
   changeEmail,
   forgotPassword,
   login,
+  oAuth,
   resendOtp,
   resetPassword,
   signup,
@@ -21,6 +22,7 @@ import {
 } from "../middlewares";
 import resetPasswordSchema from "../schemas/resetPasswordSchema";
 import changeEmailSchema from "../schemas/changeEmailSchema";
+import passport from "passport";
 
 const authRouter = Router();
 
@@ -59,5 +61,35 @@ authRouter
     validateRequestBody(changeEmailSchema),
     changeEmail
   );
+
+authRouter.route("/google").get(
+  passport.authenticate("google", {
+    session: false,
+    scope: ["email", "profile"],
+  })
+);
+
+authRouter.route("/google/callback").get(
+  passport.authenticate("google", {
+    session: false,
+    // failureRedirect: "/auth",
+  }),
+  oAuth
+);
+
+authRouter.route("/github").get(
+  passport.authenticate("github", {
+    session: false,
+    scope: ["email", "profile"],
+  })
+);
+
+authRouter.route("/github/callback").get(
+  passport.authenticate("github", {
+    session: false,
+    // failureRedirect: "/auth",
+  }),
+  oAuth
+);
 
 export default authRouter;

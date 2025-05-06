@@ -1,11 +1,13 @@
 import * as express from "express";
 import TCurrentUser from "./TCurrentUser";
+import { Profile } from "passport";
 
 declare global {
   namespace Express {
     interface Request {
       validatedData?: any;
-      user?: TCurrentUser;
+      profile?: Profile;
+      currentUser?: TCurrentUser;
     }
   }
 }

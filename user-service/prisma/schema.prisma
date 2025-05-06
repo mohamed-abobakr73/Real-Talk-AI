@@ -19,12 +19,20 @@ model User {
   username String 
   email String @unique()
   password String?
-  oauthProvider oauthProvider?
   profileImage String? @default("https://ik.imagekit.io/RealTalk/tr:n-ik_ml_thumbnail/user-avatar_H3y7eWAOa.jpg")
   verified Boolean? @default(false)
+  createdAt DateTime @default(now())
 }
 
-enum oauthProvider {
+model AuthProviders {
+  id Int @id @default(autoincrement())
+  userId String
+  provider AuthProviderType
+  authProviderId String
+  createdAt DateTime @default(now())
+}
+
+enum AuthProviderType {
   google
-  gihub
+  github
 }

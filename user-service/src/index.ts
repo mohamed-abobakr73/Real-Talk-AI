@@ -7,6 +7,8 @@ import cookieParser from "cookie-parser";
 import TGlobalError from "./types/TGlobalError";
 import httpStatusText from "./utils/httpStatusText";
 import { authRouter } from "./routes";
+import passport from "passport";
+import "./config/passportOAuth";
 
 configDotenv();
 // TODO DON"T RETURN THE PASSWORD WITH THE USER IN RESPONSES
@@ -17,6 +19,7 @@ app.use(cookieParser());
 app.use(morgan("dev"));
 app.use(cors());
 app.use(helmet());
+app.use(passport.initialize());
 
 app.use("/api/v1/auth", authRouter);
 // app.use("/v1/users", usersRouter);
