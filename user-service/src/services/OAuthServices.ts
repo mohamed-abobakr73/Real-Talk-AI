@@ -30,6 +30,7 @@ const checkIfUserAlreadyExists = async (email: string, profile: Profile) => {
     profileImage: profile.photos?.[0]?.value,
     verified: true,
   };
+  console.log("User Profile Image", userData.profileImage);
   return { userAlreadyExists, userData };
 };
 

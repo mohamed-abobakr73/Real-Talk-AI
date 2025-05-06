@@ -21,8 +21,13 @@ const signupService = async (userData: TNewUser) => {
     }
 
     if (profileImage) {
-      const image = await uploadToImageKit(profileImage, username!);
-      userData.profileImage = image.url;
+      // This is for the google auth signup, if the user have an image we don't upload to image kit and use the google image
+      if (profileImage.startsWith("https")) {
+        userData.profileImage = profileImage;
+      } else {
+        const image = await uploadToImageKit(profileImage, username!);
+        userData.profileImage = image.url;
+      }
     }
 
     const user = await prisma.user.create({ data: userData });
