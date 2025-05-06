@@ -6,7 +6,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import TGlobalError from "./types/TGlobalError";
 import httpStatusText from "./utils/httpStatusText";
-import { authRouter } from "./routes";
+import { authRouter, usersRouter } from "./routes";
 import passport from "passport";
 import "./config/passportOAuth";
 
@@ -22,7 +22,7 @@ app.use(helmet());
 app.use(passport.initialize());
 
 app.use("/api/v1/auth", authRouter);
-// app.use("/v1/users", usersRouter);
+app.use("/api/v1/users", usersRouter);
 
 app.use(
   (error: TGlobalError, req: Request, res: Response, next: NextFunction) => {

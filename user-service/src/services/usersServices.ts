@@ -2,13 +2,15 @@ import prisma from "../config/prismaClient";
 import { User } from "../generated/prisma";
 import globalError from "../utils/globalError";
 import httpStatusText from "../utils/httpStatusText";
+import uploadToImageKit from "../utils/uploadToImageKit";
 
-const getUserService = async (email: string) => {
+const getUserService = async (userId: string) => {
   try {
-    const user = await prisma.user.findUnique({
-      where: { email },
+    const user = await prisma.user.findFirst({
+      where: { userId },
       omit: { password: true },
     });
+
     if (!user) {
       const error = globalError.create(
         "User not found",
@@ -17,6 +19,7 @@ const getUserService = async (email: string) => {
       );
       throw error;
     }
+
     return user;
   } catch (error) {
     throw error;
@@ -26,6 +29,13 @@ const getUserService = async (email: string) => {
 const updateUserService = async (fields: Partial<User>) => {
   try {
     const { userId, email, password, ...rest } = fields;
+    const { profileImage } = rest;
+
+    if (profileImage) {
+      const image = await uploadToImageKit(profileImage, email!);
+      rest.profileImage = image.url;
+    }
+
     const user = await prisma.user.update({
       where: { userId: userId },
       data: rest,
