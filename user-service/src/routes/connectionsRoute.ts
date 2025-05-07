@@ -6,6 +6,7 @@ import {
 import sendConnectionSchema from "../schemas/sendConnectionSchema";
 import {
   getRecievedConnections,
+  getUserConnections,
   sendConnection,
   updateConnectionStatus,
 } from "../controllers/connectionsController";
@@ -23,6 +24,10 @@ connectionsRouter
 
 connectionsRouter
   .route("/")
+  .get(verifyAccessOrRefreshToken("access"), getUserConnections);
+
+connectionsRouter
+  .route("/recieved-connections")
   .get(verifyAccessOrRefreshToken("access"), getRecievedConnections);
 
 connectionsRouter

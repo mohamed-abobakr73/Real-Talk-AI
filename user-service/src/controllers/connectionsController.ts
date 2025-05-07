@@ -3,6 +3,23 @@ import { asyncHandler } from "../middlewares";
 import connectionsServices from "../services/connectionsServices";
 import httpStatusText from "../utils/httpStatusText";
 
+const getUserConnections = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const userId = req.currentUser?.userId;
+
+    const userConnections = await connectionsServices.getUserConnectionService(
+      userId!
+    );
+
+    return res.status(200).json({
+      status: httpStatusText.SUCCESS,
+      data: {
+        userConnections,
+      },
+    });
+  }
+);
+
 const getRecievedConnections = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const userId = req.currentUser?.userId;
@@ -62,4 +79,9 @@ const updateConnectionStatus = asyncHandler(
   }
 );
 
-export { getRecievedConnections, sendConnection, updateConnectionStatus };
+export {
+  getUserConnections,
+  getRecievedConnections,
+  sendConnection,
+  updateConnectionStatus,
+};

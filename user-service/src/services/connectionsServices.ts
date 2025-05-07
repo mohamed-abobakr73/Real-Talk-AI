@@ -4,6 +4,21 @@ import globalError from "../utils/globalError";
 import httpStatusText from "../utils/httpStatusText";
 import usersServices from "./usersServices";
 
+const getUserConnectionService = async (userId: string) => {
+  try {
+    const connectedUsers = await prisma.userConnections.findMany({
+      where: {
+        connectionStatus: ConnectionStatus.accepted,
+        OR: [{ userId }, { connectedUserId: userId }],
+      },
+    });
+
+    return connectedUsers;
+  } catch (error) {
+    throw error;
+  }
+};
+
 const getRecievedConnectionsService = async (userId: string) => {
   const recievedConnections = await prisma.userConnections.findMany({
     where: {
@@ -72,4 +87,5 @@ export default {
   getRecievedConnectionsService,
   sendConnectionService,
   updateConnectionStatusService,
+  getUserConnectionService,
 };
