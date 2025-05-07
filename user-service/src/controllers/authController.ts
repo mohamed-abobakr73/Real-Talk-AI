@@ -167,13 +167,18 @@ const oAuth = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const profile = req.profile;
     console.log(profile?.provider);
-    const user = await OAuthServices.oAuthService(profile!);
+    const { user, token, refreshToken } = await OAuthServices.oAuthService(
+      profile!
+    );
+
+    sendRefreshTokenToCookies(res, refreshToken);
 
     return res.status(200).json({
       status: httpStatusText.SUCCESS,
       data: {
         message: "Login successful",
         user,
+        token,
       },
     });
   }
