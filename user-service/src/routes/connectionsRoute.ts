@@ -4,7 +4,10 @@ import {
   verifyAccessOrRefreshToken,
 } from "../middlewares";
 import sendConnectionSchema from "../schemas/sendConnectionSchema";
-import { sendConnection } from "../controllers/connectionsController";
+import {
+  getRecievedConnections,
+  sendConnection,
+} from "../controllers/connectionsController";
 
 const connectionsRouter = Router();
 
@@ -15,5 +18,9 @@ connectionsRouter
     validateRequestBody(sendConnectionSchema),
     sendConnection
   );
+
+connectionsRouter
+  .route("/")
+  .get(verifyAccessOrRefreshToken("access"), getRecievedConnections);
 
 export default connectionsRouter;
