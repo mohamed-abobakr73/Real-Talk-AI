@@ -11,7 +11,7 @@ import passport from "passport";
 import "./config/passportOAuth";
 
 configDotenv();
-// TODO DON"T RETURN THE PASSWORD WITH THE USER IN RESPONSES
+
 const app = express();
 
 app.use(express.json());
