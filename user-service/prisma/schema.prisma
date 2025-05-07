@@ -56,5 +56,5 @@ enum AuthProviderType {
 enum ConnectionStatus {
   pending
   accepted
-  blocked
+  rejected
 }

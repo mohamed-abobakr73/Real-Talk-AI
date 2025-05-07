@@ -7,7 +7,9 @@ import sendConnectionSchema from "../schemas/sendConnectionSchema";
 import {
   getRecievedConnections,
   sendConnection,
+  updateConnectionStatus,
 } from "../controllers/connectionsController";
+import updateConnectionStatusSchema from "../schemas/updateConnectionStatusSchema";
 
 const connectionsRouter = Router();
 
@@ -23,4 +25,11 @@ connectionsRouter
   .route("/")
   .get(verifyAccessOrRefreshToken("access"), getRecievedConnections);
 
+connectionsRouter
+  .route("/:connectionId")
+  .patch(
+    verifyAccessOrRefreshToken("access"),
+    validateRequestBody(updateConnectionStatusSchema),
+    updateConnectionStatus
+  );
 export default connectionsRouter;

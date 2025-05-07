@@ -40,4 +40,26 @@ const sendConnection = asyncHandler(
   }
 );
 
-export { getRecievedConnections, sendConnection };
+const updateConnectionStatus = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { connectionId } = req.params;
+    const { status } = req.validatedData;
+    const userId = req.currentUser?.userId;
+
+    const updatedConnection =
+      await connectionsServices.updateConnectionStatusService(
+        connectionId,
+        status,
+        userId!
+      );
+
+    return res.status(200).json({
+      status: httpStatusText.SUCCESS,
+      data: {
+        updatedConnection,
+      },
+    });
+  }
+);
+
+export { getRecievedConnections, sendConnection, updateConnectionStatus };
