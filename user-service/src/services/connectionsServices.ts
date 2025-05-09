@@ -3,6 +3,7 @@ import { ConnectionStatus } from "../generated/prisma";
 import { TPaginationData } from "../types";
 import globalError from "../utils/globalError";
 import httpStatusText from "../utils/httpStatusText";
+import paginationInfo from "../utils/paginationUtils/paginationInfo";
 import usersServices from "./usersServices";
 
 const getUserConnectionService = async (
@@ -21,20 +22,31 @@ const getUserConnectionService = async (
       },
     });
 
-    return connectedUsers;
+    const pagination = paginationInfo(connectedUsers.length, limit, offset);
+
+    return { connectedUsers, pagination };
   } catch (error) {
     throw error;
   }
 };
 
-const getRecievedConnectionsService = async (userId: string) => {
+const getRecievedConnectionsService = async (
+  userId: string,
+  paginationData: TPaginationData
+) => {
+  const { limit, offset } = paginationData;
   const recievedConnections = await prisma.userConnections.findMany({
+    skip: offset,
+    take: limit,
     where: {
       connectedUserId: userId,
+      connectionStatus: "pending",
     },
   });
 
-  return recievedConnections;
+  const pagination = paginationInfo(recievedConnections.length, limit, offset);
+
+  return { recievedConnections, pagination };
 };
 
 const sendConnectionService = async (senderId: string, recieverId: string) => {

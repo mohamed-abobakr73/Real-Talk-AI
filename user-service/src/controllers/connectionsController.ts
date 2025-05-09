@@ -7,16 +7,20 @@ import paginationParams from "../utils/paginationUtils/paginationParams";
 const getUserConnections = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const userId = req.currentUser?.userId;
+
     const paginationData = paginationParams(req.query);
-    const userConnections = await connectionsServices.getUserConnectionService(
-      userId!,
-      paginationData
-    );
+
+    const { connectedUsers: userConnections, pagination } =
+      await connectionsServices.getUserConnectionService(
+        userId!,
+        paginationData
+      );
 
     return res.status(200).json({
       status: httpStatusText.SUCCESS,
       data: {
         userConnections,
+        pagination,
       },
     });
   }
@@ -26,13 +30,19 @@ const getRecievedConnections = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const userId = req.currentUser?.userId;
 
-    const recievedConnections =
-      await connectionsServices.getRecievedConnectionsService(userId!);
+    const paginationData = paginationParams(req.query);
+
+    const { recievedConnections, pagination } =
+      await connectionsServices.getRecievedConnectionsService(
+        userId!,
+        paginationData
+      );
 
     return res.status(200).json({
       status: httpStatusText.SUCCESS,
       data: {
         recievedConnections,
+        pagination,
       },
     });
   }
