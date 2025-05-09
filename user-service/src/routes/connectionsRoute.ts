@@ -5,7 +5,7 @@ import {
 } from "../middlewares";
 import sendConnectionSchema from "../schemas/sendConnectionSchema";
 import {
-  getRecievedConnections,
+  getReceivedConnections,
   getUserConnections,
   sendConnection,
   updateConnectionStatus,
@@ -27,8 +27,8 @@ connectionsRouter
   .get(verifyAccessOrRefreshToken("access"), getUserConnections);
 
 connectionsRouter
-  .route("/recieved-connections")
-  .get(verifyAccessOrRefreshToken("access"), getRecievedConnections);
+  .route("/received-connections")
+  .get(verifyAccessOrRefreshToken("access"), getReceivedConnections);
 
 connectionsRouter
   .route("/:connectionId")

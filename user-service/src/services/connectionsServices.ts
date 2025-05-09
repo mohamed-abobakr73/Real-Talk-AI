@@ -37,7 +37,7 @@ const getUserConnectionService = async (
   }
 };
 
-const getRecievedConnectionsService = async (
+const getReceivedConnectionsService = async (
   userId: string,
   paginationData: TPaginationData
 ) => {
@@ -49,7 +49,7 @@ const getRecievedConnectionsService = async (
     },
   });
 
-  const recievedConnections = await prisma.userConnections.findMany({
+  const receivedConnections = await prisma.userConnections.findMany({
     skip: offset,
     take: limit,
     where: {
@@ -58,18 +58,18 @@ const getRecievedConnectionsService = async (
     },
   });
 
-  const pagination = paginationInfo(count, recievedConnections.length, limit);
+  const pagination = paginationInfo(count, receivedConnections.length, limit);
 
-  return { recievedConnections, pagination };
+  return { receivedConnections, pagination };
 };
 
-const sendConnectionService = async (senderId: string, recieverId: string) => {
+const sendConnectionService = async (senderId: string, receiverId: string) => {
   try {
-    const reciverExists = await usersServices.getUserService(recieverId);
+    const receiverExists = await usersServices.getUserService(receiverId);
     const connection = prisma.userConnections.create({
       data: {
         userId: senderId,
-        connectedUserId: recieverId,
+        connectedUserId: receiverId,
       },
     });
     return connection;
@@ -87,6 +87,7 @@ const updateConnectionStatusService = async (
     const connection = await prisma.userConnections.update({
       where: {
         id: connectionId,
+        connectionStatus: "pending",
       },
       data: {
         connectionStatus: status,
@@ -95,7 +96,7 @@ const updateConnectionStatusService = async (
 
     if (!connection) {
       const error = globalError.create(
-        "Connection not found",
+        "Connection not found, or already accepted or rejected",
         404,
         httpStatusText.NOT_FOUND
       );
@@ -118,7 +119,7 @@ const updateConnectionStatusService = async (
 };
 
 export default {
-  getRecievedConnectionsService,
+  getReceivedConnectionsService,
   sendConnectionService,
   updateConnectionStatusService,
   getUserConnectionService,

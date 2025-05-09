@@ -26,14 +26,14 @@ const getUserConnections = asyncHandler(
   }
 );
 
-const getRecievedConnections = asyncHandler(
+const getReceivedConnections = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const userId = req.currentUser?.userId;
 
     const paginationData = paginationParams(req.query);
 
-    const { recievedConnections, pagination } =
-      await connectionsServices.getRecievedConnectionsService(
+    const { receivedConnections, pagination } =
+      await connectionsServices.getReceivedConnectionsService(
         userId!,
         paginationData
       );
@@ -41,7 +41,7 @@ const getRecievedConnections = asyncHandler(
     return res.status(200).json({
       status: httpStatusText.SUCCESS,
       data: {
-        recievedConnections,
+        receivedConnections,
         pagination,
       },
     });
@@ -93,7 +93,7 @@ const updateConnectionStatus = asyncHandler(
 
 export {
   getUserConnections,
-  getRecievedConnections,
+  getReceivedConnections,
   sendConnection,
   updateConnectionStatus,
 };
