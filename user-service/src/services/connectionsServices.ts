@@ -87,14 +87,13 @@ const updateConnectionStatusService = async (
     const connection = await prisma.userConnections.update({
       where: {
         id: connectionId,
-        connectionStatus: "pending",
       },
       data: {
         connectionStatus: status,
       },
     });
 
-    if (!connection) {
+    if (!connection || connection.connectionStatus !== "pending") {
       const error = globalError.create(
         "Connection not found, or already accepted or rejected",
         404,
