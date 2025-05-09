@@ -2,13 +2,15 @@ import { NextFunction, Request, Response } from "express";
 import { asyncHandler } from "../middlewares";
 import connectionsServices from "../services/connectionsServices";
 import httpStatusText from "../utils/httpStatusText";
+import paginationParams from "../utils/paginationUtils/paginationParams";
 
 const getUserConnections = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const userId = req.currentUser?.userId;
-
+    const paginationData = paginationParams(req.query);
     const userConnections = await connectionsServices.getUserConnectionService(
-      userId!
+      userId!,
+      paginationData
     );
 
     return res.status(200).json({

@@ -1,12 +1,20 @@
 import prisma from "../config/prismaClient";
 import { ConnectionStatus } from "../generated/prisma";
+import { TPaginationData } from "../types";
 import globalError from "../utils/globalError";
 import httpStatusText from "../utils/httpStatusText";
 import usersServices from "./usersServices";
 
-const getUserConnectionService = async (userId: string) => {
+const getUserConnectionService = async (
+  userId: string,
+  paginationData: TPaginationData
+) => {
   try {
+    const { limit, offset } = paginationData;
+
     const connectedUsers = await prisma.userConnections.findMany({
+      skip: offset,
+      take: limit,
       where: {
         connectionStatus: ConnectionStatus.accepted,
         OR: [{ userId }, { connectedUserId: userId }],
