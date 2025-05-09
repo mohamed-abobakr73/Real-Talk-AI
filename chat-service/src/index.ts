@@ -3,12 +3,15 @@ import http from "http";
 import cors from "cors";
 import { Server } from "socket.io";
 import { configDotenv } from "dotenv";
+import mongodbConnection from "./config/mongodbConnection";
 
 configDotenv();
 
 const PORT = process.env.PORT;
 
 const app = epxress();
+
+mongodbConnection();
 
 const server = http.createServer(app);
 
