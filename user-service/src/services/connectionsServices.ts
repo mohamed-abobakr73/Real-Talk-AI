@@ -13,6 +13,13 @@ const getUserConnectionService = async (
   try {
     const { limit, offset } = paginationData;
 
+    const count = await prisma.userConnections.count({
+      where: {
+        OR: [{ userId }, { connectedUserId: userId }],
+        connectionStatus: ConnectionStatus.accepted,
+      },
+    });
+
     const connectedUsers = await prisma.userConnections.findMany({
       skip: offset,
       take: limit,
@@ -22,7 +29,7 @@ const getUserConnectionService = async (
       },
     });
 
-    const pagination = paginationInfo(connectedUsers.length, limit, offset);
+    const pagination = paginationInfo(count, connectedUsers.length, limit);
 
     return { connectedUsers, pagination };
   } catch (error) {
@@ -35,6 +42,13 @@ const getRecievedConnectionsService = async (
   paginationData: TPaginationData
 ) => {
   const { limit, offset } = paginationData;
+  const count = await prisma.userConnections.count({
+    where: {
+      connectedUserId: userId,
+      connectionStatus: "pending",
+    },
+  });
+
   const recievedConnections = await prisma.userConnections.findMany({
     skip: offset,
     take: limit,
@@ -44,7 +58,7 @@ const getRecievedConnectionsService = async (
     },
   });
 
-  const pagination = paginationInfo(recievedConnections.length, limit, offset);
+  const pagination = paginationInfo(count, recievedConnections.length, limit);
 
   return { recievedConnections, pagination };
 };
