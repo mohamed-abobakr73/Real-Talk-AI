@@ -7,6 +7,7 @@ import sendConnectionSchema from "../schemas/sendConnectionSchema";
 import {
   getReceivedConnections,
   getUserConnections,
+  getUserSentConnections,
   sendConnection,
   updateConnectionStatus,
 } from "../controllers/connectionsController";
@@ -31,10 +32,15 @@ connectionsRouter
   .get(verifyAccessOrRefreshToken("access"), getReceivedConnections);
 
 connectionsRouter
+  .route("/sent-connections")
+  .get(verifyAccessOrRefreshToken("access"), getUserSentConnections);
+
+connectionsRouter
   .route("/:connectionId")
   .patch(
     verifyAccessOrRefreshToken("access"),
     validateRequestBody(updateConnectionStatusSchema),
     updateConnectionStatus
   );
+
 export default connectionsRouter;

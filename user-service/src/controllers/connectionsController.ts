@@ -26,6 +26,28 @@ const getUserConnections = asyncHandler(
   }
 );
 
+const getUserSentConnections = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const userId = req.currentUser?.userId;
+
+    const paginationData = paginationParams(req.query);
+
+    const { sentConnections, pagination } =
+      await connectionsServices.getUserSentConnectionsService(
+        userId!,
+        paginationData
+      );
+
+    return res.status(200).json({
+      status: httpStatusText.SUCCESS,
+      data: {
+        sentConnections,
+        pagination,
+      },
+    });
+  }
+);
+
 const getReceivedConnections = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const userId = req.currentUser?.userId;
@@ -94,6 +116,7 @@ const updateConnectionStatus = asyncHandler(
 export {
   getUserConnections,
   getReceivedConnections,
+  getUserSentConnections,
   sendConnection,
   updateConnectionStatus,
 };

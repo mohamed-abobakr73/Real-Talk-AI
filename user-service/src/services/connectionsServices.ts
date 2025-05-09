@@ -63,6 +63,32 @@ const getReceivedConnectionsService = async (
   return { receivedConnections, pagination };
 };
 
+const getUserSentConnectionsService = async (
+  userId: string,
+  paginationData: TPaginationData
+) => {
+  const { limit, offset } = paginationData;
+  const count = await prisma.userConnections.count({
+    where: {
+      userId,
+      connectionStatus: "pending",
+    },
+  });
+
+  const sentConnections = await prisma.userConnections.findMany({
+    skip: offset,
+    take: limit,
+    where: {
+      userId,
+      connectionStatus: "pending",
+    },
+  });
+
+  const pagination = paginationInfo(count, sentConnections.length, limit);
+
+  return { sentConnections, pagination };
+};
+
 const sendConnectionService = async (senderId: string, receiverId: string) => {
   try {
     const receiverExists = await usersServices.getUserService(receiverId);
@@ -84,12 +110,9 @@ const updateConnectionStatusService = async (
   userId: string
 ) => {
   try {
-    const connection = await prisma.userConnections.update({
+    const connection = await prisma.userConnections.findFirst({
       where: {
         id: connectionId,
-      },
-      data: {
-        connectionStatus: status,
       },
     });
 
@@ -111,7 +134,16 @@ const updateConnectionStatusService = async (
       throw error;
     }
 
-    return connection;
+    const updateConnection = await prisma.userConnections.update({
+      where: {
+        id: connectionId,
+      },
+      data: {
+        connectionStatus: status,
+      },
+    });
+
+    return updateConnection;
   } catch (error) {
     throw error;
   }
@@ -119,7 +151,8 @@ const updateConnectionStatusService = async (
 
 export default {
   getReceivedConnectionsService,
+  getUserSentConnectionsService,
+  getUserConnectionService,
   sendConnectionService,
   updateConnectionStatusService,
-  getUserConnectionService,
 };
