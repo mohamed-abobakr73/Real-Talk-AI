@@ -1,4 +1,4 @@
-import epxress from "express";
+import epxress, { json } from "express";
 import http from "http";
 import cors from "cors";
 import { Server } from "socket.io";
@@ -24,19 +24,6 @@ const io = new Server(server, {
 });
 
 app.use(cors());
-
-app.get("/", async (req, res) => {
-  const channel = await connectRabbitMQ("mq-test-queue");
-  if (!channel) return;
-  channel.sendToQueue("mq-test-queue", Buffer.from("Hello World!"));
-  console.log("Message sent");
-  channel.consume("mq-test-queue", (msg) => {
-    if (!msg) {
-      return;
-    }
-    console.log("Message received", msg.content.toString());
-  });
-});
 
 io.on("connection", (socket) => {
   console.log("✅ New client connected:", socket.id);
