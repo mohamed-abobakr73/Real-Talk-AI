@@ -4,6 +4,7 @@ import cors from "cors";
 import { Server } from "socket.io";
 import { configDotenv } from "dotenv";
 import mongodbConnection from "./config/mongodbConnection";
+import connectRabbitMQ from "./config/rabbitmqConfig";
 
 configDotenv();
 
@@ -24,8 +25,17 @@ const io = new Server(server, {
 
 app.use(cors());
 
-app.get("/", (req, res) => {
-  res.sendFile(__dirname + "/front-end-chat/index.html");
+app.get("/", async (req, res) => {
+  const channel = await connectRabbitMQ("mq-test-queue");
+  if (!channel) return;
+  channel.sendToQueue("mq-test-queue", Buffer.from("Hello World!"));
+  console.log("Message sent");
+  channel.consume("mq-test-queue", (msg) => {
+    if (!msg) {
+      return;
+    }
+    console.log("Message received", msg.content.toString());
+  });
 });
 
 io.on("connection", (socket) => {
