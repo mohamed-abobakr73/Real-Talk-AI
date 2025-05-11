@@ -10,6 +10,22 @@ import httpStatusText from "../utils/httpStatusText";
 import compareHashedValues from "../utils/hashingUtils/compareHashedValues";
 import sanitizeUser from "../utils/sanitizeUser";
 import { TNewUser } from "../types";
+import publishMessage from "../utils/rabbitmqUtils/publishMessage";
+
+const sendUserDataToQueue = async (queueName: string, user: Partial<User>) => {
+  try {
+    const userData = {
+      userId: user.userId,
+      email: user.email,
+      username: user.username,
+    };
+
+    const stringifiedUserData = JSON.stringify(userData);
+    await publishMessage(queueName, stringifiedUserData);
+  } catch (error) {
+    throw error;
+  }
+};
 
 const signupService = async (userData: TNewUser) => {
   try {
@@ -67,6 +83,8 @@ const verifyOtpService = async (email: string, otp: string) => {
       userId: user.userId,
       verified: true,
     });
+
+    await sendUserDataToQueue("users", verifiedUser);
 
     return getTokensAfterRegistrationOrLogin(verifiedUser);
   } catch (error) {
