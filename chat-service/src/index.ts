@@ -1,10 +1,10 @@
-import epxress, { json } from "express";
+import epxress from "express";
 import http from "http";
 import cors from "cors";
 import { Server } from "socket.io";
 import { configDotenv } from "dotenv";
 import mongodbConnection from "./config/mongodbConnection";
-import connectRabbitMQ from "./config/rabbitmqConfig";
+import connectRabbitMQ from "./config/connectToRabbitMq";
 
 configDotenv();
 
