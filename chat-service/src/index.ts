@@ -26,12 +26,7 @@ const io = new Server(server, {
 
 app.use(cors());
 
-const test = async () => {
-  const message = await consumeMessage("users");
-  console.log(message);
-};
-
-test().then((msg) => console.log("this is message", msg));
+consumeMessage("users");
 
 io.on("connection", (socket) => {
   console.log("✅ New client connected:", socket.id);

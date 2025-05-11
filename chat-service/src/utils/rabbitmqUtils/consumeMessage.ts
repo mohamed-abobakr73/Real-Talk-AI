@@ -16,16 +16,13 @@ const consumeMessage = async (queueName: string) => {
       throw error;
     }
 
-    channel.consume(queueName, (msg) => {
+    channel.consume(queueName, async (msg) => {
       if (msg) {
-        message = JSON.parse(msg.content.toString());
-        // channel.ack(msg);
+        message = await JSON.parse(msg.content.toString());
+        console.log(message);
+        channel.ack(msg);
       }
     });
-
-    console.log(message);
-
-    return message;
   } catch (error) {
     throw error;
   }
