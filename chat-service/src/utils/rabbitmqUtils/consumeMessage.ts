@@ -19,9 +19,11 @@ const consumeMessage = async (queueName: string) => {
     channel.consume(queueName, (msg) => {
       if (msg) {
         message = JSON.parse(msg.content.toString());
-        channel.ack(msg);
+        // channel.ack(msg);
       }
     });
+
+    console.log(message);
 
     return message;
   } catch (error) {

@@ -5,6 +5,7 @@ import { Server } from "socket.io";
 import { configDotenv } from "dotenv";
 import mongodbConnection from "./config/mongodbConnection";
 import connectRabbitMQ from "./config/connectToRabbitMq";
+import consumeMessage from "./utils/rabbitmqUtils/consumeMessage";
 
 configDotenv();
 
@@ -24,6 +25,13 @@ const io = new Server(server, {
 });
 
 app.use(cors());
+
+const test = async () => {
+  const message = await consumeMessage("users");
+  console.log(message);
+};
+
+test().then((msg) => console.log("this is message", msg));
 
 io.on("connection", (socket) => {
   console.log("✅ New client connected:", socket.id);
