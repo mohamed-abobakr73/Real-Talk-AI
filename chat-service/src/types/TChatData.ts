@@ -2,8 +2,7 @@ import TChatType from "./TChatType";
 
 type TChatData = {
   chatType: TChatType;
-  senderId: string;
-  receiverId: string;
+  users: string[];
 };
 
 export default TChatData;

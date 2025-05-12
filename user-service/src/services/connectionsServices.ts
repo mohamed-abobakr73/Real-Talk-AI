@@ -9,9 +9,9 @@ import usersServices from "./usersServices";
 
 const sendChatUsersToQueue = async (
   queueName: string,
-  users: { senderId: string; receiverId: string; chatType: TChatType }
+  chatPayload: { users: string[]; chatType: TChatType }
 ) => {
-  const stringifiedChatData = JSON.stringify(users);
+  const stringifiedChatData = JSON.stringify(chatPayload);
   const sentMessage = await publishMessage(queueName, stringifiedChatData);
   return sentMessage;
 };
@@ -155,8 +155,7 @@ const updateConnectionStatusService = async (
 
     if (status === "accepted") {
       await sendChatUsersToQueue("chats", {
-        senderId: connection.userId,
-        receiverId: connection.connectedUserId,
+        users: [connection.userId, connection.connectedUserId],
         chatType: "private",
       });
     }
