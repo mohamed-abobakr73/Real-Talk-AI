@@ -1,23 +1,40 @@
-import epxress from "express";
+import express, { NextFunction, Request, Response } from "express";
 import http from "http";
 import cors from "cors";
-import { Server } from "socket.io";
 import { configDotenv } from "dotenv";
 import mongodbConnection from "./config/mongodbConnection";
 import consumeMessage from "./utils/rabbitmqUtils/consumeMessage";
 import usersServices from "./services/usersServices";
 import chatsServices from "./services/chatsServices";
 import setupSocket from "./socket";
+import morgan from "morgan";
+import helmet from "helmet";
+import { TGlobalError } from "./types";
+import httpStatusText from "./utils/httpStatusText";
 
 configDotenv();
 
 const PORT = process.env.PORT;
 
-export const app = epxress();
+export const app = express();
 
 mongodbConnection();
 
 app.use(cors());
+app.use(express.json());
+app.use(morgan("dev"));
+app.use(helmet());
+
+app.use(
+  (error: TGlobalError, req: Request, res: Response, next: NextFunction) => {
+    res.status(error.statusCode || 500).json({
+      status: error.statusText || httpStatusText.ERROR,
+      message: error.message || "Something went wrong",
+      code: error.statusCode || 500,
+      data: null,
+    });
+  }
+);
 
 const server = http.createServer(app);
 

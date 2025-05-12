@@ -1,6 +1,6 @@
 import TGlobalError from "./TGlobalError";
 import TUser from "./TUser";
-
+import TCurrentUser from "./TCurrentUser";
 import TChatType from "./TChatType";
 import TChatData from "./TChatData";
-export { TGlobalError, TUser, TChatType, TChatData };
+export { TGlobalError, TUser, TChatType, TChatData, TCurrentUser };
