@@ -10,6 +10,7 @@ import httpStatusText from "../utils/httpStatusText";
 import compareHashedValues from "../utils/hashingUtils/compareHashedValues";
 import sanitizeUser from "../utils/sanitizeUser";
 import { TNewUser } from "../types";
+import sendUserDataToQueue from "../utils/rabbitmqUtils/sendUserDataToQueue";
 
 const signupService = async (userData: TNewUser) => {
   try {
@@ -22,7 +23,10 @@ const signupService = async (userData: TNewUser) => {
 
     if (profileImage) {
       // This is for the google auth signup, if the user have an image we don't upload to image kit and use the google image
-      if (profileImage.startsWith("https")) {
+      if (
+        typeof profileImage === "string" &&
+        profileImage.startsWith("https")
+      ) {
         userData.profileImage = profileImage;
       } else {
         const image = await uploadToImageKit(profileImage, username!);
@@ -41,6 +45,8 @@ const signupService = async (userData: TNewUser) => {
 
 const verifyOtpService = async (email: string, otp: string) => {
   try {
+    console.log(email);
+
     const user = (await usersServices.getUserService(email)) as User;
 
     if (user.verified) {
@@ -67,6 +73,8 @@ const verifyOtpService = async (email: string, otp: string) => {
       userId: user.userId,
       verified: true,
     });
+
+    await sendUserDataToQueue("users", verifiedUser);
 
     return getTokensAfterRegistrationOrLogin(verifiedUser);
   } catch (error) {

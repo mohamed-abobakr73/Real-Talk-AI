@@ -5,7 +5,7 @@ import usersServices from "../services/usersServices";
 const getUser = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const { userParam } = req.params;
-    console.log(userParam);
+
     const user = await usersServices.getUserService(userParam);
 
     return res.status(200).json({

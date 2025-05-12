@@ -1,10 +1,20 @@
 import prisma from "../config/prismaClient";
 import { ConnectionStatus } from "../generated/prisma";
-import { TPaginationData } from "../types";
+import { TChatType, TPaginationData } from "../types";
 import globalError from "../utils/globalError";
 import httpStatusText from "../utils/httpStatusText";
 import paginationInfo from "../utils/paginationUtils/paginationInfo";
+import publishMessage from "../utils/rabbitmqUtils/publishMessage";
 import usersServices from "./usersServices";
+
+const sendChatUsersToQueue = async (
+  queueName: string,
+  chatPayload: { users: string[]; chatType: TChatType }
+) => {
+  const stringifiedChatData = JSON.stringify(chatPayload);
+  const sentMessage = await publishMessage(queueName, stringifiedChatData);
+  return sentMessage;
+};
 
 const getUserConnectionService = async (
   userId: string,
@@ -125,7 +135,7 @@ const updateConnectionStatusService = async (
       throw error;
     }
 
-    if (connection.userId !== userId) {
+    if (connection.connectedUserId !== userId) {
       const error = globalError.create(
         "You are not authorized to update this connection",
         401,
@@ -142,6 +152,13 @@ const updateConnectionStatusService = async (
         connectionStatus: status,
       },
     });
+
+    if (status === "accepted") {
+      await sendChatUsersToQueue("chats", {
+        users: [connection.userId, connection.connectedUserId],
+        chatType: "private",
+      });
+    }
 
     return updateConnection;
   } catch (error) {

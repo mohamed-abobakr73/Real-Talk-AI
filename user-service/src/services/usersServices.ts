@@ -4,10 +4,12 @@ import globalError from "../utils/globalError";
 import httpStatusText from "../utils/httpStatusText";
 import uploadToImageKit from "../utils/uploadToImageKit";
 
-const getUserService = async (userId: string) => {
+const getUserService = async (userParam: string) => {
   try {
     const user = await prisma.user.findFirst({
-      where: { userId },
+      where: {
+        OR: [{ userId: userParam }, { email: userParam }],
+      },
       omit: { password: true },
     });
 

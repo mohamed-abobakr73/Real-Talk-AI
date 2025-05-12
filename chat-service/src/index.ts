@@ -3,12 +3,18 @@ import http from "http";
 import cors from "cors";
 import { Server } from "socket.io";
 import { configDotenv } from "dotenv";
+import mongodbConnection from "./config/mongodbConnection";
+import consumeMessage from "./utils/rabbitmqUtils/consumeMessage";
+import usersServices from "./services/usersServices";
+import chatsServices from "./services/chatsServices";
 
 configDotenv();
 
 const PORT = process.env.PORT;
 
 const app = epxress();
+
+mongodbConnection();
 
 const server = http.createServer(app);
 
@@ -21,9 +27,8 @@ const io = new Server(server, {
 
 app.use(cors());
 
-app.get("/", (req, res) => {
-  res.sendFile(__dirname + "/front-end-chat/index.html");
-});
+consumeMessage("users", usersServices.createUser);
+consumeMessage("chats", chatsServices.createChat);
 
 io.on("connection", (socket) => {
   console.log("✅ New client connected:", socket.id);
