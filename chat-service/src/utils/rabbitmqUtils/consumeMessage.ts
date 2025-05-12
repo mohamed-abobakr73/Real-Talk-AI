@@ -2,7 +2,10 @@ import connectRabbitMQ from "../../config/connectToRabbitMq";
 import globalError from "../globalError";
 import httpStatusText from "../httpStatusText";
 
-const consumeMessage = async (queueName: string) => {
+const consumeMessage = async (
+  queueName: string,
+  callBack: (message: any) => Promise<void>
+) => {
   try {
     const channel = await connectRabbitMQ(queueName);
     let message = null;
@@ -19,7 +22,7 @@ const consumeMessage = async (queueName: string) => {
     channel.consume(queueName, async (msg) => {
       if (msg) {
         message = await JSON.parse(msg.content.toString());
-        console.log(message);
+        await callBack(message);
         channel.ack(msg);
       }
     });
