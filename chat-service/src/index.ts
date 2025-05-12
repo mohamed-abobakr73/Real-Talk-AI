@@ -6,6 +6,7 @@ import { configDotenv } from "dotenv";
 import mongodbConnection from "./config/mongodbConnection";
 import consumeMessage from "./utils/rabbitmqUtils/consumeMessage";
 import usersServices from "./services/usersServices";
+import chatsServices from "./services/chatsServices";
 
 configDotenv();
 
@@ -27,6 +28,7 @@ const io = new Server(server, {
 app.use(cors());
 
 consumeMessage("users", usersServices.createUser);
+consumeMessage("chats", chatsServices.createChat);
 
 io.on("connection", (socket) => {
   console.log("✅ New client connected:", socket.id);

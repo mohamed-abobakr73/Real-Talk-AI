@@ -7,6 +7,7 @@ import TAuthProvider from "./TAuthProvider";
 import TPaginationParams from "./TPaginationParams";
 import TPaginationInfo from "./TPaginationInfo";
 import TPaginationData from "./TPaginationData";
+import TChatType from "./TChatType";
 export {
   TGlobalError,
   TRedisClient,
@@ -17,4 +18,5 @@ export {
   TPaginationParams,
   TPaginationInfo,
   TPaginationData,
+  TChatType,
 };

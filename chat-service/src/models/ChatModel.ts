@@ -3,9 +3,9 @@ import { Schema, model } from "mongoose";
 const chatSchema = new Schema(
   {
     type: { type: String, enum: ["private", "group"], required: true },
-    users: [{ type: Schema.Types.ObjectId, ref: "User" }],
+    users: [{ type: String, required: true, ref: "User" }],
     messages: [{ type: Schema.Types.ObjectId, ref: "Message" }],
-    avatar: { type: Schema.Types.ObjectId, ref: "File" },
+    avatar: { type: Schema.Types.ObjectId, ref: "File" }, // For group chats only, on private will be set on the fly, same applies for name
     name: { type: String },
     lastMessage: {
       type: Schema.Types.ObjectId,
