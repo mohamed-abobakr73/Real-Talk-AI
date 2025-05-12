@@ -17,7 +17,24 @@ const checkChatTypeAndNumberOfUsers = (
   }
 };
 
-const createChat = async (chatData: TChatData) => {
+const getChatService = async (chatId: string) => {
+  try {
+    const chat = await ChatModel.findById(chatId);
+    if (!chat) {
+      const error = globalError.create(
+        "Chat not found",
+        404,
+        httpStatusText.NOT_FOUND
+      );
+      throw error;
+    }
+    return chat;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const createChatService = async (chatData: TChatData) => {
   try {
     const { chatType, users } = chatData;
     const chatPayload = {
@@ -34,4 +51,4 @@ const createChat = async (chatData: TChatData) => {
   }
 };
 
-export default { createChat };
+export default { getChatService, createChatService };

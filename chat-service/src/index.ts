@@ -41,7 +41,7 @@ const server = http.createServer(app);
 setupSocket(server);
 
 consumeMessage("users", usersServices.createUser);
-consumeMessage("chats", chatsServices.createChat);
+consumeMessage("chats", chatsServices.createChatService);
 
 server.listen(PORT || 4000, () => {
   console.log(`Server running on port ${PORT}`);

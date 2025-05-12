@@ -3,8 +3,7 @@ import globalError from "../globalError";
 import httpStatusText from "../httpStatusText";
 
 const validateAccessToken = (token: string) => {
-  let TOKEN_SECRET_KEY: string;
-  TOKEN_SECRET_KEY = process.env.JWT_SECRET_KEY!;
+  const TOKEN_SECRET_KEY = process.env.JWT_SECRET_KEY!;
 
   const isValidToken = jwt.verify(token, TOKEN_SECRET_KEY);
   if (!isValidToken) {
