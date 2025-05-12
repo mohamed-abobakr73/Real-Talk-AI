@@ -23,6 +23,7 @@ const consumeMessage = async (
       if (msg) {
         message = await JSON.parse(msg.content.toString());
         await callBack(message);
+        console.log(message);
         channel.ack(msg);
       }
     });

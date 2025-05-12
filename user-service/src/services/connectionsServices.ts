@@ -4,7 +4,17 @@ import { TPaginationData } from "../types";
 import globalError from "../utils/globalError";
 import httpStatusText from "../utils/httpStatusText";
 import paginationInfo from "../utils/paginationUtils/paginationInfo";
+import publishMessage from "../utils/rabbitmqUtils/publishMessage";
 import usersServices from "./usersServices";
+
+const sendChatUsersToQueue = async (
+  queueName: string,
+  users: { senderId: string; receiverId: string }
+) => {
+  const stringifiedUsersData = JSON.stringify(users);
+  const sentMessage = await publishMessage(queueName, stringifiedUsersData);
+  return sentMessage;
+};
 
 const getUserConnectionService = async (
   userId: string,
@@ -142,6 +152,13 @@ const updateConnectionStatusService = async (
         connectionStatus: status,
       },
     });
+
+    if (status === "accepted") {
+      await sendChatUsersToQueue("chats", {
+        senderId: connection.userId,
+        receiverId: connection.connectedUserId,
+      });
+    }
 
     return updateConnection;
   } catch (error) {

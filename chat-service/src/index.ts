@@ -4,7 +4,6 @@ import cors from "cors";
 import { Server } from "socket.io";
 import { configDotenv } from "dotenv";
 import mongodbConnection from "./config/mongodbConnection";
-import connectRabbitMQ from "./config/connectToRabbitMq";
 import consumeMessage from "./utils/rabbitmqUtils/consumeMessage";
 import usersServices from "./services/usersServices";
 
