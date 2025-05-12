@@ -7,56 +7,24 @@ import mongodbConnection from "./config/mongodbConnection";
 import consumeMessage from "./utils/rabbitmqUtils/consumeMessage";
 import usersServices from "./services/usersServices";
 import chatsServices from "./services/chatsServices";
+import setupSocket from "./socket";
 
 configDotenv();
 
 const PORT = process.env.PORT;
 
-const app = epxress();
+export const app = epxress();
 
 mongodbConnection();
 
+app.use(cors());
+
 const server = http.createServer(app);
 
-const io = new Server(server, {
-  cors: {
-    origin: "*",
-    methods: ["GET", "POST"],
-  },
-});
-
-app.use(cors());
+setupSocket(server);
 
 consumeMessage("users", usersServices.createUser);
 consumeMessage("chats", chatsServices.createChat);
-
-io.on("connection", (socket) => {
-  console.log("✅ New client connected:", socket.id);
-
-  // Join chat room
-  socket.on("join_chat", (chatId) => {
-    socket.join(chatId);
-    console.log(`📥 ${socket.id} joined room ${chatId}`);
-  });
-
-  // Handle sending messages
-  socket.on("send_message", (messageData) => {
-    const { chatId, senderId, content } = messageData;
-    const message = {
-      chatId,
-      senderId,
-      content,
-      createdAt: new Date(),
-    };
-    console.log("📨 Message received:", message);
-    io.to(chatId).emit("receive_message", message);
-  });
-
-  // Handle disconnect
-  socket.on("disconnect", () => {
-    console.log("❌ Client disconnected:", socket.id);
-  });
-});
 
 server.listen(PORT || 4000, () => {
   console.log(`Server running on port ${PORT}`);
