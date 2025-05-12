@@ -4,7 +4,7 @@ import httpStatusText from "../httpStatusText";
 
 const consumeMessage = async (
   queueName: string,
-  callBack: (message: any) => Promise<void>
+  callBack: (message: any) => Promise<any>
 ) => {
   try {
     const channel = await connectRabbitMQ(queueName);

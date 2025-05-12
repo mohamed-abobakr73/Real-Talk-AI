@@ -1,3 +1,3 @@
 import TGlobalError from "./TGlobalError";
-
-export { TGlobalError };
+import TUser from "./TUser";
+export { TGlobalError, TUser };
