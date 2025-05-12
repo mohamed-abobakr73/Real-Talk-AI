@@ -4,6 +4,7 @@ import prisma from "../config/prismaClient";
 import authServices from "./authServices";
 import { AuthProviderType } from "../generated/prisma";
 import { getTokensAfterRegistrationOrLogin } from "../utils/jwtUtils";
+import sendUserDataToQueue from "../utils/rabbitmqUtils/sendUserDataToQueue";
 
 const createAuthProviderService = async (authProviderData: TAuthProvider) => {
   try {
@@ -84,6 +85,7 @@ const oAuthService = async (profile: Profile) => {
       userData!,
       profile
     );
+    await sendUserDataToQueue("users", user);
     return getTokensAfterRegistrationOrLogin(user);
   }
 
