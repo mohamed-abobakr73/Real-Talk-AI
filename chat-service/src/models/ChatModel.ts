@@ -1,6 +1,7 @@
 import { Schema, model } from "mongoose";
+import { TChat } from "../types";
 
-const chatSchema = new Schema(
+const chatSchema = new Schema<TChat>(
   {
     type: { type: String, enum: ["private", "group"], required: true },
     users: [{ type: String, required: true, ref: "User" }],
