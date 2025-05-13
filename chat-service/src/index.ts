@@ -6,7 +6,7 @@ import mongodbConnection from "./config/mongodbConnection";
 import consumeMessage from "./utils/rabbitmqUtils/consumeMessage";
 import usersServices from "./services/usersServices";
 import chatsServices from "./services/chatsServices";
-import setupSocket from "./socket";
+import setupSocket from "./socketHandler";
 import morgan from "morgan";
 import helmet from "helmet";
 import { TGlobalError } from "./types";

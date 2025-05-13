@@ -16,13 +16,14 @@ const verifySocketAccessToken = async (
         401,
         httpStatusText.FAIL
       );
-      next(error);
+      throw error;
     }
 
     const user = validateAccessToken(token);
     socket.data.user = user;
+    next();
   } catch (error: any) {
-    next(error);
+    next(error as ExtendedError);
   }
 };
 
