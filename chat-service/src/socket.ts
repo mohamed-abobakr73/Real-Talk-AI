@@ -1,10 +1,8 @@
 import { Server } from "socket.io";
 import http from "http";
-import messagesServices from "./services/messagesServices";
 import verifySocketAccessToken from "./middlewares/verifySocketAccessToken";
 import chatsServices from "./services/chatsServices";
-import globalError from "./utils/globalError";
-import httpStatusText from "./utils/httpStatusText";
+import receiveAndSaveChatMessage from "./utils/receiveAndSaveChatMessage";
 
 const setupSocket = (server: http.Server) => {
   const io = new Server(server, {
@@ -21,24 +19,16 @@ const setupSocket = (server: http.Server) => {
 
   io.on("connection", (socket) => {
     console.log("✅ New client connected:", socket.id);
-    console.log("user from inside socket", socket.data.user);
+
     // Join chat room
     socket.on("join_chat", async (chatId) => {
       try {
         const chat = await chatsServices.getChatService(chatId);
-        if (chat.users.includes(socket.data.user._id)) {
-          socket.join(chatId);
-        } else {
-          console.log(chat.users);
-          const error = globalError.create(
-            "You are not a member of this chat",
-            400,
-            httpStatusText.FAIL
-          );
-          // throw error;
-        }
-        // socket.join(chatId);
-
+        chatsServices.checkIfUserIsPartOfChat(
+          chat.users,
+          socket.data.user.userId
+        );
+        socket.join(chatId);
         console.log("Joined chat room:", chatId);
       } catch (error) {
         socket.emit("validation_error", error);
@@ -48,20 +38,10 @@ const setupSocket = (server: http.Server) => {
     // Handle sending messages
     socket.on("send_message", async (messageData) => {
       try {
-        const { chatId, senderId, content } = messageData;
-        const messageInfo = {
-          chat: chatId,
-          sender: senderId,
-          message: content,
-        };
-        const savedMessage = await messagesServices.createMessage(
-          chatId,
-          messageInfo
-        );
-        console.log("📨 Message received:", savedMessage);
-        io.to(chatId).emit("receive_message", savedMessage);
+        const message = await receiveAndSaveChatMessage(messageData);
+        io.to(messageData.chat).emit("receive_message", message);
       } catch (error) {
-        // next(error as ExtendedError);
+        io.emit("validation_error", error);
       }
     });
 

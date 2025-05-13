@@ -17,6 +17,17 @@ const checkChatTypeAndNumberOfUsers = (
   }
 };
 
+const checkIfUserIsPartOfChat = (users: string[], userId: string) => {
+  if (!users.includes(userId)) {
+    const error = globalError.create(
+      "You are not a member of this chat",
+      400,
+      httpStatusText.FAIL
+    );
+    throw error;
+  }
+};
+
 const getChatService = async (chatId: string) => {
   try {
     const chat = await ChatModel.findById(chatId);
@@ -51,4 +62,4 @@ const createChatService = async (chatData: TChatData) => {
   }
 };
 
-export default { getChatService, createChatService };
+export default { getChatService, createChatService, checkIfUserIsPartOfChat };

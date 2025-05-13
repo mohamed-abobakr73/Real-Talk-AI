@@ -6,9 +6,11 @@ const appendMessageToChat = async (chat: any, message: any) => {
   await chat.save();
 };
 
-const createMessage = async (chatId: string, messageData: any) => {
+const createMessage = async (messageData: any) => {
   try {
+    const { chat: chatId } = messageData;
     const chat = await chatsServices.getChatService(chatId);
+
     const message = await MessageModel.create(messageData);
     await appendMessageToChat(chat, message);
     return message;
