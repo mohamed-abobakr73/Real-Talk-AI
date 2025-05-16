@@ -1,5 +1,5 @@
 import { ChatModel } from "../models";
-import { TChatData, TChatType } from "../types";
+import { TChatType, TGroupChatData, TChatData } from "../types";
 import globalError from "../utils/globalError";
 import httpStatusText from "../utils/httpStatusText";
 
@@ -73,9 +73,30 @@ const createChatService = async (chatData: TChatData) => {
   }
 };
 
+const createGroupChatService = async (
+  userId: string,
+  chatData: TGroupChatData
+) => {
+  try {
+    const { avatar, name } = chatData;
+    const chatPayload = {
+      type: "group",
+      users: [{ user: userId, role: "admin" }],
+      avatar,
+      name,
+    };
+
+    const chat = await ChatModel.create(chatPayload);
+    return chat;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default {
   getUserChatsService,
   getChatService,
   createChatService,
   checkIfUserIsPartOfChat,
+  createGroupChatService,
 };
