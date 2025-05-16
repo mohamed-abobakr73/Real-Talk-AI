@@ -4,6 +4,7 @@ import chatsServices from "./chatsServices";
 
 const appendMessageToChat = async (chat: TChat, message: string) => {
   chat.messages.push(message);
+  chat.lastMessage = message;
   await chat.save();
 };
 
