@@ -8,6 +8,17 @@ const appendMessageToChat = async (chat: TChat, message: string) => {
   await chat.save();
 };
 
+const getChatMessagesService = async (userId: string, chatId: string) => {
+  try {
+    const chat = await chatsServices.getChatService(chatId);
+    chatsServices.checkIfUserIsPartOfChat(chat.users, userId);
+    const messages = await MessageModel.find({ chat: chatId });
+    return messages;
+  } catch (error) {
+    throw error;
+  }
+};
+
 const createMessage = async (messageData: TMessage) => {
   try {
     const { chat: chatId } = messageData;
@@ -21,4 +32,4 @@ const createMessage = async (messageData: TMessage) => {
   }
 };
 
-export default { createMessage };
+export default { getChatMessagesService, createMessage };
