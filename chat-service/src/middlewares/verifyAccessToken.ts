@@ -5,25 +5,23 @@ import { validateAccessToken, validateHeadersToken } from "../utils/jwtUtils";
 
 configDotenv();
 
-const verifyAccessToken = () => {
-  return (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const token = validateHeadersToken(req);
+const verifyAccessToken = (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const token = validateHeadersToken(req);
 
-      const decodedJwt = validateAccessToken(token) as TCurrentUser;
+    const decodedJwt = validateAccessToken(token) as TCurrentUser;
 
-      const currentUser: TCurrentUser = {
-        userId: decodedJwt.userId,
-        username: decodedJwt.username,
-        email: decodedJwt.email,
-      };
+    const currentUser: TCurrentUser = {
+      userId: decodedJwt.userId,
+      username: decodedJwt.username,
+      email: decodedJwt.email,
+    };
 
-      req.currentUser = currentUser;
-      next();
-    } catch (error) {
-      next(error);
-    }
-  };
+    req.currentUser = currentUser;
+    next();
+  } catch (error) {
+    next(error);
+  }
 };
 
 export default verifyAccessToken;

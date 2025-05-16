@@ -28,6 +28,15 @@ const checkIfUserIsPartOfChat = (users: string[], userId: string) => {
   }
 };
 
+const getUserChatsService = async (userId: string) => {
+  try {
+    const chats = await ChatModel.find({ users: userId });
+    return chats;
+  } catch (error) {
+    throw error;
+  }
+};
+
 const getChatService = async (chatId: string) => {
   try {
     const chat = await ChatModel.findById(chatId);
@@ -62,4 +71,9 @@ const createChatService = async (chatData: TChatData) => {
   }
 };
 
-export default { getChatService, createChatService, checkIfUserIsPartOfChat };
+export default {
+  getUserChatsService,
+  getChatService,
+  createChatService,
+  checkIfUserIsPartOfChat,
+};

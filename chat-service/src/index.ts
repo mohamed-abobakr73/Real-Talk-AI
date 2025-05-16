@@ -11,6 +11,7 @@ import morgan from "morgan";
 import helmet from "helmet";
 import { TGlobalError } from "./types";
 import httpStatusText from "./utils/httpStatusText";
+import chatsRouter from "./routes/chatsRoute";
 
 configDotenv();
 
@@ -24,6 +25,8 @@ app.use(cors());
 app.use(express.json());
 app.use(morgan("dev"));
 app.use(helmet());
+
+app.use("/api/v1/chats", chatsRouter);
 
 app.use(
   (error: TGlobalError, req: Request, res: Response, next: NextFunction) => {
