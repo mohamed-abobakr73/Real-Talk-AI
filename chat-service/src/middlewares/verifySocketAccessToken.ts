@@ -23,7 +23,7 @@ const verifySocketAccessToken = async (
     socket.data.user = user;
     next();
   } catch (error: any) {
-    next(error as ExtendedError);
+    return next(error as ExtendedError);
   }
 };
 
