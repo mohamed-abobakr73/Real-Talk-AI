@@ -3,6 +3,7 @@ import http from "http";
 import verifySocketAccessToken from "../middlewares/verifySocketAccessToken";
 import registerMessageHandler from "./registerMessageHandler";
 import joinChatHandler from "./joinChatHandler";
+import updateMessageHandler from "./updateMessageHandler";
 
 const setupSocket = (server: http.Server) => {
   const io = new Server(server, {
@@ -21,6 +22,8 @@ const setupSocket = (server: http.Server) => {
     joinChatHandler(socket);
 
     registerMessageHandler(socket, io);
+
+    updateMessageHandler(socket, io);
 
     // Handle disconnect
     socket.on("disconnect", () => {

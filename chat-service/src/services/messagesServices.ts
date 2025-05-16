@@ -1,5 +1,7 @@
 import { MessageModel } from "../models";
 import { TChat, TMessage } from "../types";
+import globalError from "../utils/globalError";
+import httpStatusText from "../utils/httpStatusText";
 import chatsServices from "./chatsServices";
 
 const appendMessageToChat = async (chat: TChat, message: string) => {
@@ -32,4 +34,31 @@ const createMessage = async (userId: string, messageData: TMessage) => {
   }
 };
 
-export default { getChatMessagesService, createMessage };
+const updateMessageService = async (
+  messageId: string,
+  newMessageContent: string
+) => {
+  try {
+    const message = await MessageModel.findByIdAndUpdate(
+      messageId,
+      {
+        message: newMessageContent,
+      },
+      { new: true }
+    );
+    if (!message) {
+      const error = globalError.create(
+        "Message not found",
+        404,
+        httpStatusText.NOT_FOUND
+      );
+      throw error;
+    }
+
+    return message;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export default { getChatMessagesService, createMessage, updateMessageService };
