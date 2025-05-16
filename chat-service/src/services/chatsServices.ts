@@ -37,7 +37,7 @@ const getUserChatsService = async (userId: string) => {
   }
 };
 
-const getChatService = async (chatId: string) => {
+const getChatService = async (userId: string, chatId: string) => {
   try {
     const chat = await ChatModel.findById(chatId);
     if (!chat) {
@@ -48,6 +48,8 @@ const getChatService = async (chatId: string) => {
       );
       throw error;
     }
+
+    checkIfUserIsPartOfChat(chat.users, userId);
     return chat;
   } catch (error) {
     throw error;

@@ -15,11 +15,9 @@ const joinChatHandler = (socket: Socket) => {
         callback(error);
       }
 
-      const chat = await chatsServices.getChatService(chatId);
-
-      chatsServices.checkIfUserIsPartOfChat(
-        chat.users,
-        socket.data.user.userId
+      const chat = await chatsServices.getChatService(
+        socket.data.user.userId,
+        chatId
       );
 
       socket.join(chatId);

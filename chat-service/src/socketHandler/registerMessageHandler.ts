@@ -13,7 +13,11 @@ const registerMessageHandler = (socket: Socket, io: Server) => {
 
       validatedData.sender = socket.data.user.userId;
 
-      const savedMessage = await messagesServices.createMessage(validatedData);
+      const savedMessage = await messagesServices.createMessage(
+        socket.data.user.userId,
+        validatedData
+      );
+
       io.to(validatedData.chat).emit("receive_message", savedMessage);
     } catch (error) {
       callback(error);
