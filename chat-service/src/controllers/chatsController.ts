@@ -25,4 +25,19 @@ const getChatMessages = asyncHandler(
   }
 );
 
+const createGroupChat = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { userId } = req.currentUser!;
+    const validatedRequestBody = req.validatedData;
+    if (req.file) {
+      validatedRequestBody.avatar = req.file.buffer;
+    }
+    const chat = await chatsServices.createGroupChatService(
+      userId,
+      validatedRequestBody
+    );
+    return res.status(200).json({ status: httpStatusText.SUCCESS, chat });
+  }
+);
+
 export { getUserChats, getChatMessages };

@@ -2,6 +2,7 @@ import { ChatModel } from "../models";
 import { TChatType, TGroupChatData, TChatData } from "../types";
 import globalError from "../utils/globalError";
 import httpStatusText from "../utils/httpStatusText";
+import uploadToImageKit from "../utils/uploadToImageKit";
 
 const checkChatTypeAndNumberOfUsers = (
   usersLength: number,
@@ -85,6 +86,11 @@ const createGroupChatService = async (
       avatar,
       name,
     };
+
+    if (avatar) {
+      const image = await uploadToImageKit(avatar, name);
+      chatPayload.avatar = image.url;
+    }
 
     const chat = await ChatModel.create(chatPayload);
     return chat;
