@@ -40,4 +40,18 @@ const createGroupChat = asyncHandler(
   }
 );
 
-export { getUserChats, getChatMessages };
+const addChatMember = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { userId } = req.currentUser!;
+    const validatedRequestBody = req.validatedData;
+
+    const chat = await chatsServices.addChatMemberService(
+      userId,
+      validatedRequestBody
+    );
+
+    return res.status(200).json({ status: httpStatusText.SUCCESS, chat });
+  }
+);
+
+export { getUserChats, getChatMessages, createGroupChat, addChatMember };

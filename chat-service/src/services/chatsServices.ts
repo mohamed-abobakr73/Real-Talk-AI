@@ -1,5 +1,5 @@
 import { ChatModel } from "../models";
-import { TChatType, TGroupChatData, TChatData } from "../types";
+import { TChatType, TGroupChatData, TChatData, TChatUser } from "../types";
 import globalError from "../utils/globalError";
 import httpStatusText from "../utils/httpStatusText";
 import uploadToImageKit from "../utils/uploadToImageKit";
@@ -18,10 +18,35 @@ const checkChatTypeAndNumberOfUsers = (
   }
 };
 
-const checkIfUserIsPartOfChat = (users: string[], userId: string) => {
-  if (!users.includes(userId)) {
+const checkIfUserIsPartOfChat = (users: TChatUser[], userId: string) => {
+  const user = users.find((user) => user.user === userId);
+  if (!user) {
     const error = globalError.create(
       "You are not a member of this chat",
+      400,
+      httpStatusText.FAIL
+    );
+    throw error;
+  }
+  return user;
+};
+
+const checkUserRole = (user: TChatUser, role: "admin" | "user") => {
+  if (user.role !== role) {
+    const error = globalError.create(
+      "You are not authorized to perform this action",
+      400,
+      httpStatusText.FAIL
+    );
+    throw error;
+  }
+};
+
+const checkIfUserAlreadyExistInChat = (users: TChatUser[], userId: string) => {
+  const user = users.find((user) => user.user === userId);
+  if (user) {
+    const error = globalError.create(
+      "User already exists in chat",
       400,
       httpStatusText.FAIL
     );
@@ -99,10 +124,43 @@ const createGroupChatService = async (
   }
 };
 
+const addChatMemberService = async (
+  userId: string,
+  userData: { chatId: string; memberId: string; role: "admin" | "user" }
+) => {
+  try {
+    const { chatId, memberId, role } = userData;
+
+    const chat = await ChatModel.findById(chatId);
+
+    if (!chat) {
+      const error = globalError.create(
+        "Chat not found",
+        404,
+        httpStatusText.NOT_FOUND
+      );
+      throw error;
+    }
+
+    const adminUser = checkIfUserIsPartOfChat(chat.users, userId);
+
+    checkUserRole(adminUser, "admin");
+
+    checkIfUserAlreadyExistInChat(chat.users, memberId);
+
+    chat.users.push({ user: userId, role });
+    await chat.save();
+    return chat;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default {
   getUserChatsService,
   getChatService,
   createChatService,
   checkIfUserIsPartOfChat,
   createGroupChatService,
+  addChatMemberService,
 };
