@@ -42,8 +42,11 @@ const checkUserRole = (user: TChatUser, role: "admin" | "user") => {
   }
 };
 
-const checkIfUserAlreadyExistInChat = (users: TChatUser[], userId: string) => {
-  const user = users.find((user) => user.user === userId);
+const checkIfUserAlreadyExistInChat = (
+  users: TChatUser[],
+  memberId: string
+) => {
+  const user = users.find((user) => user.user === memberId);
   if (user) {
     const error = globalError.create(
       "User already exists in chat",
@@ -56,7 +59,10 @@ const checkIfUserAlreadyExistInChat = (users: TChatUser[], userId: string) => {
 
 const getUserChatsService = async (userId: string) => {
   try {
-    const chats = await ChatModel.find({ users: userId });
+    const chats = await ChatModel.find({
+      users: { $elemMatch: { user: userId } },
+    }).populate("lastMessage");
+
     return chats;
   } catch (error) {
     throw error;
@@ -148,7 +154,7 @@ const addChatMemberService = async (
 
     checkIfUserAlreadyExistInChat(chat.users, memberId);
 
-    chat.users.push({ user: userId, role });
+    chat.users.push({ user: memberId, role });
     await chat.save();
     return chat;
   } catch (error) {

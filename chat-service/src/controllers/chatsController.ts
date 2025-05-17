@@ -42,8 +42,10 @@ const createGroupChat = asyncHandler(
 
 const addChatMember = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
+    const { chatId } = req.params;
     const { userId } = req.currentUser!;
     const validatedRequestBody = req.validatedData;
+    validatedRequestBody.chatId = chatId;
 
     const chat = await chatsServices.addChatMemberService(
       userId,

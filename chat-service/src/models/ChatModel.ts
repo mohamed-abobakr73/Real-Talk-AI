@@ -6,7 +6,7 @@ const chatSchema = new Schema<TChat>(
     type: { type: String, enum: ["private", "group"], required: true },
     users: [
       {
-        user: { type: Schema.Types.ObjectId, ref: "User", required: true },
+        user: { type: String, ref: "User", required: true },
         role: { type: String, enum: ["admin", "user"], default: "user" },
         mutedUntil: { type: Date, default: null },
       },
