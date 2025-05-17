@@ -28,6 +28,8 @@ app.use(helmet());
 
 app.use("/api/v1/chats", chatsRouter);
 
+// TODO make the create chat service make both private and group chats
+
 app.use(
   (error: TGlobalError, req: Request, res: Response, next: NextFunction) => {
     res.status(error.statusCode || 500).json({

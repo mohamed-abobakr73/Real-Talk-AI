@@ -1,14 +1,37 @@
 import { ChatModel } from "../models";
-import { TChatType, TGroupChatData, TChatData, TChatUser } from "../types";
+import {
+  TChatType,
+  TGroupChatData,
+  TChatData,
+  TChatUser,
+  TChat,
+} from "../types";
 import globalError from "../utils/globalError";
 import httpStatusText from "../utils/httpStatusText";
 import uploadToImageKit from "../utils/uploadToImageKit";
+
+const checkIfChatExits = (chat: TChat | undefined): chat is TChat => {
+  try {
+    if (!chat) {
+      const error = globalError.create(
+        "Chat not found",
+        404,
+        httpStatusText.NOT_FOUND
+      );
+      throw error;
+    }
+    return true;
+  } catch (error) {
+    throw error;
+  }
+};
 
 const checkChatTypeAndNumberOfUsers = (
   usersLength: number,
   chatType: TChatType
 ) => {
-  if (chatType === "private" && usersLength !== 2) {
+  console.log(chatType, usersLength);
+  if (chatType === "private" && usersLength > 2) {
     const error = globalError.create(
       "You can only have two users in a private chat",
       400,
@@ -71,17 +94,11 @@ const getUserChatsService = async (userId: string) => {
 
 const getChatService = async (userId: string, chatId: string) => {
   try {
-    const chat = await ChatModel.findById(chatId);
-    if (!chat) {
-      const error = globalError.create(
-        "Chat not found",
-        404,
-        httpStatusText.NOT_FOUND
-      );
-      throw error;
-    }
+    const chat = (await ChatModel.findById(chatId)) as TChat;
 
+    checkIfChatExits(chat);
     checkIfUserIsPartOfChat(chat.users, userId);
+
     return chat;
   } catch (error) {
     throw error;
@@ -137,16 +154,11 @@ const addChatMemberService = async (
   try {
     const { chatId, memberId, role } = userData;
 
-    const chat = await ChatModel.findById(chatId);
+    const chat = (await ChatModel.findById(chatId)) as TChat;
 
-    if (!chat) {
-      const error = globalError.create(
-        "Chat not found",
-        404,
-        httpStatusText.NOT_FOUND
-      );
-      throw error;
-    }
+    checkIfChatExits(chat);
+
+    checkChatTypeAndNumberOfUsers(chat.users.length, chat.type);
 
     const adminUser = checkIfUserIsPartOfChat(chat.users, userId);
 
@@ -155,7 +167,7 @@ const addChatMemberService = async (
     checkIfUserAlreadyExistInChat(chat.users, memberId);
 
     chat.users.push({ user: memberId, role });
-    await chat.save();
+    await chat!.save();
     return chat;
   } catch (error) {
     throw error;
