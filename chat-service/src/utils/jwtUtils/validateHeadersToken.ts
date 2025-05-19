@@ -1,6 +1,6 @@
 import { Request } from "express";
 import httpStatusText from "../httpStatusText";
-import globalError from "../globalError";
+import GlobalError from "../GlobalError";
 
 const validateHeadersToken = (req: Request) => {
   let requestAuth: string = "";
@@ -8,7 +8,7 @@ const validateHeadersToken = (req: Request) => {
     req.headers["authorization"] || (req.headers["Authorization"] as string);
 
   if (!requestAuth) {
-    const error = globalError.create(
+    const error = new GlobalError(
       "Access token not found",
       401,
       httpStatusText.FAIL
@@ -18,7 +18,7 @@ const validateHeadersToken = (req: Request) => {
 
   const token = requestAuth!.split(" ")[1];
   if (!token) {
-    const error = globalError.create(
+    const error = new GlobalError(
       "Access token not found",
       401,
       httpStatusText.FAIL

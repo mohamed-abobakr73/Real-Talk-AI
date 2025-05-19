@@ -1,5 +1,5 @@
 import { ExtendedError, Socket } from "socket.io";
-import globalError from "../utils/globalError";
+import GlobalError from "../utils/GlobalError";
 import httpStatusText from "../utils/httpStatusText";
 import { validateAccessToken } from "../utils/jwtUtils";
 
@@ -11,7 +11,7 @@ const verifySocketAccessToken = async (
     const token = socket.handshake.auth.token;
 
     if (!token) {
-      const error = globalError.create(
+      const error = new GlobalError(
         "Access token not found",
         401,
         httpStatusText.FAIL

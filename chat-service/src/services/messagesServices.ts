@@ -1,6 +1,6 @@
 import { MessageModel } from "../models";
 import { TChat, TMessage } from "../types";
-import globalError from "../utils/globalError";
+import GlobalError from "../utils/GlobalError";
 import httpStatusText from "../utils/httpStatusText";
 import chatsServices from "./chatsServices";
 
@@ -47,7 +47,7 @@ const updateMessageService = async (
       { new: true }
     );
     if (!message) {
-      const error = globalError.create(
+      const error = new GlobalError(
         "Message not found",
         404,
         httpStatusText.NOT_FOUND

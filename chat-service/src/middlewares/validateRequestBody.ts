@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { ZodSchema } from "zod";
 import httpStatusText from "../utils/httpStatusText";
 import { fromZodError } from "zod-validation-error";
-import globalError from "../utils/globalError";
+import GlobalError from "../utils/GlobalError";
 
 const validateRequestBody = (schema: ZodSchema) => {
   return (req: Request, res: Response, next: NextFunction) => {
@@ -11,13 +11,13 @@ const validateRequestBody = (schema: ZodSchema) => {
       const zodErrors = fromZodError(parsedRequestBody.error).details.map(
         (error) => error.message
       );
-      const error = globalError.create(
+      const error = new GlobalError(
         "Validation error",
         400,
         httpStatusText.FAIL,
         zodErrors
       );
-      console.log(zodErrors);
+
       return next(error);
     }
     req.validatedData = parsedRequestBody.data;

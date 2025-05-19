@@ -12,6 +12,7 @@ import helmet from "helmet";
 import { TGlobalError } from "./types";
 import httpStatusText from "./utils/httpStatusText";
 import chatsRouter from "./routes/chatsRoute";
+import { ValidationError } from "zod-validation-error";
 
 configDotenv();
 
@@ -37,6 +38,7 @@ app.use(
       message: error.message || "Something went wrong",
       code: error.statusCode || 500,
       data: null,
+      validationErrors: error.validationErrors || null,
     });
   }
 );

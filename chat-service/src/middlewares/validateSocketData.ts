@@ -1,12 +1,12 @@
 import { ZodSchema } from "zod";
 import httpStatusText from "../utils/httpStatusText";
-import globalError from "../utils/globalError";
+import GlobalError from "../utils/GlobalError";
 import { fromZodError } from "zod-validation-error";
 
 const validateSocketData = (schema: ZodSchema, rawData: unknown) => {
   const parsedSocketData = schema.safeParse(rawData);
   if (!parsedSocketData.success) {
-    const error = globalError.create(
+    const error = new GlobalError(
       "Validation error",
       400,
       httpStatusText.FAIL,

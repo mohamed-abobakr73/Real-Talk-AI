@@ -6,14 +6,14 @@ import {
   TChatUser,
   TChat,
 } from "../types";
-import globalError from "../utils/globalError";
+import GlobalError from "../utils/GlobalError";
 import httpStatusText from "../utils/httpStatusText";
 import uploadToImageKit from "../utils/uploadToImageKit";
 
 const checkIfChatExits = (chat: TChat | undefined): chat is TChat => {
   try {
     if (!chat) {
-      const error = globalError.create(
+      const error = new GlobalError(
         "Chat not found",
         404,
         httpStatusText.NOT_FOUND
@@ -32,7 +32,7 @@ const checkChatTypeAndNumberOfUsers = (
 ) => {
   console.log(chatType, usersLength);
   if (chatType === "private" && usersLength > 2) {
-    const error = globalError.create(
+    const error = new GlobalError(
       "You can only have two users in a private chat",
       400,
       httpStatusText.FAIL
@@ -44,7 +44,7 @@ const checkChatTypeAndNumberOfUsers = (
 const checkIfUserIsPartOfChat = (users: TChatUser[], userId: string) => {
   const user = users.find((user) => user.user === userId);
   if (!user) {
-    const error = globalError.create(
+    const error = new GlobalError(
       "You are not a member of this chat",
       400,
       httpStatusText.FAIL
@@ -56,7 +56,7 @@ const checkIfUserIsPartOfChat = (users: TChatUser[], userId: string) => {
 
 const checkUserRole = (user: TChatUser, role: "admin" | "user") => {
   if (user.role !== role) {
-    const error = globalError.create(
+    const error = new GlobalError(
       "You are not authorized to perform this action",
       400,
       httpStatusText.FAIL
@@ -71,7 +71,7 @@ const checkIfUserAlreadyExistInChat = (
 ) => {
   const user = users.find((user) => user.user === memberId);
   if (user) {
-    const error = globalError.create(
+    const error = new GlobalError(
       "User already exists in chat",
       400,
       httpStatusText.FAIL
@@ -192,10 +192,8 @@ const muteChatMemberService = async (
     const memberToMute = chat.users.find(
       (user) => user.user === memberToMuteId
     );
-    console.log(muteDate);
+
     memberToMute!.mutedUntil = muteDate;
-    console.log(memberToMute);
-    console.log(adminUser);
     await chat.save();
 
     return chat;
