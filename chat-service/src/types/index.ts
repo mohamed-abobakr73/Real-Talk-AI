@@ -8,6 +8,7 @@ import TGroupChatData from "./TGroupChatData";
 import TMessage from "./TMessage";
 import TChatUser from "./TChatUser";
 import TErrorResponse from "./TErrorResponse";
+import TRedisClient from "./TRedisClient";
 export {
   TGlobalError,
   TUser,
@@ -19,4 +20,5 @@ export {
   TGroupChatData,
   TChatUser,
   TErrorResponse,
+  TRedisClient,
 };

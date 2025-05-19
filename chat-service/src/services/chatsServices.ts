@@ -8,6 +8,7 @@ import {
 } from "../types";
 import GlobalError from "../utils/GlobalError";
 import httpStatusText from "../utils/httpStatusText";
+import redisUtils from "../utils/redisUtils";
 import uploadToImageKit from "../utils/uploadToImageKit";
 
 const checkIfChatExits = (chat: TChat | undefined): chat is TChat => {
@@ -201,6 +202,45 @@ const muteChatMemberService = async (
   }
 };
 
+const checkIfUserIsMutedService = async (chatId: string, userId: string) => {
+  try {
+    const cacheKey = `${chatId}-${userId}`;
+    const cachedMuteUntil = await redisUtils.get(cacheKey);
+
+    if (cachedMuteUntil && cachedMuteUntil > Date.now()) {
+      const error = new GlobalError("You are muted", 400, httpStatusText.FAIL);
+      throw error;
+    }
+
+    const chat = (await ChatModel.findById(chatId, {
+      users: { $elemMatch: { user: userId } },
+    }).lean()) as TChat;
+
+    checkIfChatExits(chat);
+
+    checkIfUserIsPartOfChat(chat.users, userId);
+
+    const userInChat = chat.users[0];
+
+    if (userInChat.mutedUntil && userInChat.mutedUntil.getTime() > Date.now()) {
+      const userMutedUntil = userInChat.mutedUntil.getTime();
+
+      await redisUtils.set(
+        cacheKey,
+        userMutedUntil.toString(),
+        userMutedUntil - Date.now()
+      );
+
+      const error = new GlobalError("You are muted", 400, httpStatusText.FAIL);
+      throw error;
+    }
+
+    await redisUtils.delete(cacheKey);
+  } catch (error) {
+    throw error;
+  }
+};
+
 const kickMemberService = async (
   userId: string,
   kickData: { chatId: string; memberToKickId: string }
@@ -232,5 +272,6 @@ export default {
   createGroupChatService,
   addChatMemberService,
   muteChatMemberService,
+  checkIfUserIsMutedService,
   kickMemberService,
 };
