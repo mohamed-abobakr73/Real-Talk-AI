@@ -201,6 +201,29 @@ const muteChatMemberService = async (
   }
 };
 
+const kickMemberService = async (
+  userId: string,
+  kickData: { chatId: string; memberToKickId: string }
+) => {
+  try {
+    const { chatId, memberToKickId } = kickData;
+
+    const chat = (await ChatModel.findById(chatId)) as TChat;
+    checkIfChatExits(chat);
+
+    const adminUser = checkIfUserIsPartOfChat(chat.users, userId);
+    checkIfUserIsPartOfChat(chat.users, memberToKickId);
+
+    checkUserRole(adminUser, "admin");
+
+    chat.users = chat.users.filter((user) => user.user !== memberToKickId);
+    await chat.save();
+    return chat;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default {
   getUserChatsService,
   getChatService,
@@ -209,4 +232,5 @@ export default {
   createGroupChatService,
   addChatMemberService,
   muteChatMemberService,
+  kickMemberService,
 };

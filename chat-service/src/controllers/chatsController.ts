@@ -72,10 +72,27 @@ const muteMember = asyncHandler(
   }
 );
 
+const kickMember = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { chatId } = req.params;
+    const { userId } = req.currentUser!;
+    const validatedRequestBody = req.validatedData;
+    validatedRequestBody.chatId = chatId;
+
+    const chat = await chatsServices.kickMemberService(
+      userId,
+      validatedRequestBody
+    );
+
+    return res.status(200).json({ status: httpStatusText.SUCCESS, chat });
+  }
+);
+
 export {
   getUserChats,
   getChatMessages,
   createGroupChat,
   addChatMember,
   muteMember,
+  kickMember,
 };
