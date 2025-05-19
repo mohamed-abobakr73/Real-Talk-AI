@@ -9,7 +9,7 @@ import chatsServices from "./services/chatsServices";
 import setupSocket from "./socketHandler";
 import morgan from "morgan";
 import helmet from "helmet";
-import { TGlobalError } from "./types";
+import { TErrorResponse, TGlobalError } from "./types";
 import httpStatusText from "./utils/httpStatusText";
 import chatsRouter from "./routes/chatsRoute";
 import { ValidationError } from "zod-validation-error";
@@ -33,13 +33,17 @@ app.use("/api/v1/chats", chatsRouter);
 
 app.use(
   (error: TGlobalError, req: Request, res: Response, next: NextFunction) => {
-    res.status(error.statusCode || 500).json({
+    const errorResponse: TErrorResponse = {
       status: error.statusText || httpStatusText.ERROR,
       message: error.message || "Something went wrong",
       code: error.statusCode || 500,
       data: null,
-      validationErrors: error.validationErrors || null,
-    });
+    };
+
+    if (error.validationErrors) {
+      errorResponse.validationErrors = error.validationErrors;
+    }
+    res.status(error.statusCode || 500).json(errorResponse);
   }
 );
 

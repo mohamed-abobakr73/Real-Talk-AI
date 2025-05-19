@@ -30,7 +30,6 @@ const checkChatTypeAndNumberOfUsers = (
   usersLength: number,
   chatType: TChatType
 ) => {
-  console.log(chatType, usersLength);
   if (chatType === "private" && usersLength > 2) {
     const error = new GlobalError(
       "You can only have two users in a private chat",

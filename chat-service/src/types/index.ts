@@ -7,6 +7,7 @@ import TChatData from "./TChatData";
 import TGroupChatData from "./TGroupChatData";
 import TMessage from "./TMessage";
 import TChatUser from "./TChatUser";
+import TErrorResponse from "./TErrorResponse";
 export {
   TGlobalError,
   TUser,
@@ -17,4 +18,5 @@ export {
   TMessage,
   TGroupChatData,
   TChatUser,
+  TErrorResponse,
 };
