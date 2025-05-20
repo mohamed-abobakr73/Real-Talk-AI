@@ -5,6 +5,8 @@ import registerMessageHandler from "./registerMessageHandler";
 import joinChatHandler from "./joinChatHandler";
 import updateMessageHandler from "./updateMessageHandler";
 import deleteMessageHandler from "./deleteMessageHandler";
+import typingIndicatorHandler from "./typingIndicatorHandler";
+import stopTypingIndicatorHandler from "./stopTypingIndicatorHandler";
 
 const setupSocket = (server: http.Server) => {
   const io = new Server(server, {
@@ -27,6 +29,10 @@ const setupSocket = (server: http.Server) => {
     updateMessageHandler(socket, io);
 
     deleteMessageHandler(socket, io);
+
+    typingIndicatorHandler(socket);
+
+    stopTypingIndicatorHandler(socket);
 
     // Handle disconnect
     socket.on("disconnect", () => {
