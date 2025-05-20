@@ -241,6 +241,32 @@ const checkIfUserIsMutedService = async (chatId: string, userId: string) => {
   }
 };
 
+const unMuteChatMemberService = async (
+  userId: string,
+  mutedUserData: { chatId: string; memberToUnMuteId: string }
+) => {
+  try {
+    const { chatId, memberToUnMuteId: memberId } = mutedUserData;
+    const cacheKey = `${chatId}-${memberId}`;
+    const chat = (await ChatModel.findById(chatId)) as TChat;
+    checkIfChatExits(chat);
+
+    const adminUser = checkIfUserIsPartOfChat(chat.users, userId);
+    const mutedMember = checkIfUserIsPartOfChat(chat.users, memberId);
+
+    checkUserRole(adminUser, "admin");
+
+    mutedMember.mutedUntil = null;
+
+    redisUtils.delete(cacheKey);
+
+    await chat.save();
+    return chat;
+  } catch (error) {
+    throw error;
+  }
+};
+
 const kickMemberService = async (
   userId: string,
   kickData: { chatId: string; memberToKickId: string }
@@ -272,6 +298,7 @@ export default {
   createGroupChatService,
   addChatMemberService,
   muteChatMemberService,
+  unMuteChatMemberService,
   checkIfUserIsMutedService,
   kickMemberService,
 };

@@ -6,6 +6,7 @@ import {
   getUserChats,
   muteMember,
   kickMember,
+  unMuteMember,
 } from "../controllers/chatsController";
 import { verifyAccessToken } from "../middlewares";
 import upload from "../config/multer";
@@ -15,6 +16,7 @@ import {
   createGroupChatSchema,
   kickMemberSchema,
   muteMemberSchema,
+  unMuteMemberSchema,
 } from "../schemas";
 
 const chatsRouter = Router();
@@ -43,6 +45,14 @@ chatsRouter
 chatsRouter
   .route("/:chatId/mute-member")
   .patch(verifyAccessToken, validateRequestBody(muteMemberSchema), muteMember);
+
+chatsRouter
+  .route("/:chatId/mute-member")
+  .delete(
+    verifyAccessToken,
+    validateRequestBody(unMuteMemberSchema),
+    unMuteMember
+  );
 
 chatsRouter
   .route("/:chatId/kick-member")
