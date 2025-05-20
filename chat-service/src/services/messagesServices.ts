@@ -61,4 +61,36 @@ const updateMessageService = async (
   }
 };
 
-export default { getChatMessagesService, createMessage, updateMessageService };
+const deleteMessageService = async (userId: string, messageId: string) => {
+  try {
+    const message = await MessageModel.findByIdAndDelete(messageId);
+    if (!message) {
+      const error = new GlobalError(
+        "Message not found",
+        404,
+        httpStatusText.NOT_FOUND
+      );
+      throw error;
+    }
+
+    if (message.sender !== userId) {
+      const error = new GlobalError(
+        "You are not the sender of this message",
+        400,
+        httpStatusText.FAIL
+      );
+      throw error;
+    }
+
+    return message;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export default {
+  getChatMessagesService,
+  createMessage,
+  updateMessageService,
+  deleteMessageService,
+};
