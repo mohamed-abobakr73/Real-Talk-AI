@@ -1,6 +1,6 @@
 import { Server } from "socket.io";
 import http from "http";
-import verifySocketAccessToken from "../middlewares/verifySocketAccessToken";
+import { verifySocketAccessToken } from "../middlewares";
 import registerMessageHandler from "./registerMessageHandler";
 import joinChatHandler from "./joinChatHandler";
 import updateMessageHandler from "./updateMessageHandler";
