@@ -2,7 +2,9 @@ import messagesServices from "../services/messagesServices";
 
 const receiveAndSaveChatMessage = async (messageData: any) => {
   try {
-    const savedMessage = await messagesServices.createMessage(messageData);
+    const savedMessage = await messagesServices.createMessageService(
+      messageData
+    );
     console.log("📨 Message received:", savedMessage);
     return savedMessage;
   } catch (error) {

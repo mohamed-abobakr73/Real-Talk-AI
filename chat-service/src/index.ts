@@ -12,7 +12,6 @@ import helmet from "helmet";
 import { TErrorResponse, TGlobalError } from "./types";
 import httpStatusText from "./utils/httpStatusText";
 import chatsRouter from "./routes/chatsRoute";
-import { ValidationError } from "zod-validation-error";
 
 configDotenv();
 
