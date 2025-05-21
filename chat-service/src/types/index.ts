@@ -9,6 +9,8 @@ import TMessage from "./TMessage";
 import TChatUser from "./TChatUser";
 import TErrorResponse from "./TErrorResponse";
 import TRedisClient from "./TRedisClient";
+import TFile from "./TFile";
+import TUploadedFile from "./TUploadedFile";
 export {
   TGlobalError,
   TUser,
@@ -21,4 +23,6 @@ export {
   TChatUser,
   TErrorResponse,
   TRedisClient,
+  TFile,
+  TUploadedFile,
 };

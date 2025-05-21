@@ -3,6 +3,7 @@ import { Schema, model } from "mongoose";
 const fileSchema = new Schema(
   {
     url: { type: String, required: true },
+    fileName: { type: String, required: true },
     type: {
       type: String,
       enum: ["image", "video", "audio", "document"],
@@ -10,7 +11,7 @@ const fileSchema = new Schema(
     },
     size: { type: Number },
     duration: { type: Number },
-    uploadedBy: { type: Schema.Types.ObjectId, ref: "User" },
+    uploadedBy: { type: String, ref: "User" },
   },
   { timestamps: true }
 );

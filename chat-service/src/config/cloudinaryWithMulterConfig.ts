@@ -1,10 +1,10 @@
 // src/config/cloudinary.ts
 import { v2 as cloudinary } from "cloudinary";
-import { config } from "dotenv";
+import { configDotenv } from "dotenv";
 import multer from "multer";
 import { CloudinaryStorage } from "multer-storage-cloudinary";
 
-config();
+configDotenv();
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME!,
