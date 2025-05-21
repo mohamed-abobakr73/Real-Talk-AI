@@ -1,14 +1,11 @@
 import { Socket, Server } from "socket.io";
 import { validateSocketData } from "../middlewares";
-import { typingIndicatorSchema } from "../schemas";
+import { chatIdSchema } from "../schemas";
 
 const typingIndicatorHandler = async (socket: Socket) => {
   socket.on("typing_indicator", async (data, callback) => {
     try {
-      const { validatedData, error } = validateSocketData(
-        typingIndicatorSchema,
-        data
-      );
+      const { validatedData, error } = validateSocketData(chatIdSchema, data);
       if (error) {
         callback(error);
       }

@@ -6,7 +6,7 @@ import addMemberToChatSchema from "./addMemberToChatSchema";
 import muteMemberSchema from "./muteMemberSchema";
 import unMuteMemberSchema from "./unMuteMemberSchema";
 import kickMemberSchema from "./kickMemberSchema";
-import typingIndicatorSchema from "./typingIndicatorSchema";
+import chatIdSchema from "./chatIdSchema";
 export {
   messageSchema,
   updateMessageSchema,
@@ -16,5 +16,5 @@ export {
   muteMemberSchema,
   unMuteMemberSchema,
   kickMemberSchema,
-  typingIndicatorSchema,
+  chatIdSchema,
 };

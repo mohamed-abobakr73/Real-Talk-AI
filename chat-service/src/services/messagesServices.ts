@@ -4,6 +4,18 @@ import GlobalError from "../utils/GlobalError";
 import httpStatusText from "../utils/httpStatusText";
 import chatsServices from "./chatsServices";
 
+const checkIfMessageExist = (message: TMessage): message is TMessage => {
+  if (!message) {
+    const error = new GlobalError(
+      "Message not found",
+      404,
+      httpStatusText.NOT_FOUND
+    );
+    throw error;
+  }
+  return true;
+};
+
 const appendMessageToChat = async (chat: TChat, message: string) => {
   chat.messages.push(message);
   chat.lastMessage = message;
@@ -88,9 +100,35 @@ const deleteMessageService = async (userId: string, messageId: string) => {
   }
 };
 
+const addReadByToMessage = async (userId: string, message: TMessage) => {
+  try {
+    message.readBy!.push(userId);
+    await message.save();
+
+    return message;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const getUnSeenMessagesService = async (userId: string, chatId: string) => {
+  try {
+    const messages = await MessageModel.find({
+      chat: chatId,
+      readBy: { $ne: userId },
+    });
+
+    return messages;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default {
   getChatMessagesService,
   createMessage,
   updateMessageService,
   deleteMessageService,
+  addReadByToMessage,
+  getUnSeenMessagesService,
 };

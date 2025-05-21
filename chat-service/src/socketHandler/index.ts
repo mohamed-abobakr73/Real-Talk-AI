@@ -7,6 +7,7 @@ import updateMessageHandler from "./updateMessageHandler";
 import deleteMessageHandler from "./deleteMessageHandler";
 import typingIndicatorHandler from "./typingIndicatorHandler";
 import stopTypingIndicatorHandler from "./stopTypingIndicatorHandler";
+import readByHandler from "./readByHandler";
 
 const setupSocket = (server: http.Server) => {
   const io = new Server(server, {
@@ -33,6 +34,8 @@ const setupSocket = (server: http.Server) => {
     typingIndicatorHandler(socket);
 
     stopTypingIndicatorHandler(socket);
+
+    readByHandler(socket, io);
 
     // Handle disconnect
     socket.on("disconnect", () => {
