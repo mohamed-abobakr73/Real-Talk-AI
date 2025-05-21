@@ -8,7 +8,6 @@ const readByHandler = async (socket: Socket, io: Server) => {
     try {
       const { validatedData, error } = validateSocketData(chatIdSchema, data);
       if (error) {
-        console.log("validatoin error");
         callback(error);
       }
       const userId = socket.data.user.userId;

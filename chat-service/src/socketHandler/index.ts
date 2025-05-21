@@ -8,6 +8,7 @@ import deleteMessageHandler from "./deleteMessageHandler";
 import typingIndicatorHandler from "./typingIndicatorHandler";
 import stopTypingIndicatorHandler from "./stopTypingIndicatorHandler";
 import readByHandler from "./readByHandler";
+import redisUtils from "../utils/redisUtils";
 
 const setupSocket = (server: http.Server) => {
   const io = new Server(server, {
@@ -21,8 +22,11 @@ const setupSocket = (server: http.Server) => {
 
   io.on("connection", (socket) => {
     console.log("✅ New client connected:", socket.id);
+    const userId = socket.data.user.userId;
 
-    // // Join chat room
+    redisUtils.hset("online_users", userId, socket.id);
+    socket.broadcast.emit("user-online", userId);
+
     joinChatHandler(socket);
 
     registerMessageHandler(socket, io);
@@ -40,6 +44,7 @@ const setupSocket = (server: http.Server) => {
     // Handle disconnect
     socket.on("disconnect", () => {
       console.log("❌ Client disconnected:", socket.id);
+      redisUtils.hdel("online_users", userId);
     });
   });
 };
