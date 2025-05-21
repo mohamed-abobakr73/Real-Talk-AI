@@ -1,19 +1,19 @@
 import { MessageModel } from "../models";
-import { TChat, TMessage } from "../types";
+import { TChat, TCreateMessageInput, TMessage } from "../types";
 import GlobalError from "../utils/GlobalError";
 import httpStatusText from "../utils/httpStatusText";
 import chatsServices from "./chatsServices";
+import filesServices from "./filesServices";
 
-const checkIfMessageExist = (message: TMessage): message is TMessage => {
-  if (!message) {
-    const error = new GlobalError(
-      "Message not found",
-      404,
-      httpStatusText.NOT_FOUND
-    );
+const createMessageFiles = async (messageData: TCreateMessageInput) => {
+  try {
+    if (messageData.files) {
+      const files = await filesServices.createFileService(messageData.files);
+      return files;
+    }
+  } catch (error) {
     throw error;
   }
-  return true;
 };
 
 const appendMessageToChat = async (chat: TChat, message: string) => {
@@ -33,14 +33,20 @@ const getChatMessagesService = async (userId: string, chatId: string) => {
   }
 };
 
-const createMessage = async (userId: string, messageData: TMessage) => {
+const createMessageService = async (
+  userId: string,
+  messageData: TCreateMessageInput
+) => {
   try {
     const { chat: chatId } = messageData;
     const chat = await chatsServices.getChatService(userId, chatId as string);
 
-    const message = await MessageModel.create(messageData);
+    const files = await createMessageFiles(messageData);
+
+    const message = await MessageModel.create({ ...messageData, files });
+
     await appendMessageToChat(chat, message._id as string);
-    return message;
+    return message.populate("files");
   } catch (error) {
     throw error;
   }
@@ -126,7 +132,7 @@ const getUnSeenMessagesService = async (userId: string, chatId: string) => {
 
 export default {
   getChatMessagesService,
-  createMessage,
+  createMessageService,
   updateMessageService,
   deleteMessageService,
   addReadByToMessage,

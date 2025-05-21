@@ -6,6 +6,7 @@ import TChatType from "./TChatType";
 import TChatData from "./TChatData";
 import TGroupChatData from "./TGroupChatData";
 import TMessage from "./TMessage";
+import TCreateMessageInput from "./TCreateMessageInput";
 import TChatUser from "./TChatUser";
 import TErrorResponse from "./TErrorResponse";
 import TRedisClient from "./TRedisClient";
@@ -19,6 +20,7 @@ export {
   TCurrentUser,
   TChat,
   TMessage,
+  TCreateMessageInput,
   TGroupChatData,
   TChatUser,
   TErrorResponse,

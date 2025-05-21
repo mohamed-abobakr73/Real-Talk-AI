@@ -4,7 +4,7 @@ type TMessage = Document & {
   chat: Schema.Types.ObjectId | string;
   message: string;
   sender: string;
-  files?: string[];
+  files?: Schema.Types.ObjectId[] | string[];
   readBy?: string[];
 };
 
