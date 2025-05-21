@@ -1,6 +1,7 @@
 import { Schema, model } from "mongoose";
+import { TMessage } from "../types";
 
-const messageSchema = new Schema(
+const messageSchema = new Schema<TMessage>(
   {
     chat: { type: Schema.Types.ObjectId, required: true, ref: "Chat" },
     message: { type: String, required: true },

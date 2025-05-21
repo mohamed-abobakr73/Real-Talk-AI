@@ -1,62 +1,58 @@
-import epxress from "express";
+import express, { NextFunction, Request, Response } from "express";
 import http from "http";
 import cors from "cors";
-import { Server } from "socket.io";
 import { configDotenv } from "dotenv";
 import mongodbConnection from "./config/mongodbConnection";
 import consumeMessage from "./utils/rabbitmqUtils/consumeMessage";
 import usersServices from "./services/usersServices";
 import chatsServices from "./services/chatsServices";
+import setupSocket from "./socketHandler";
+import morgan from "morgan";
+import helmet from "helmet";
+import { TErrorResponse, TGlobalError } from "./types";
+import httpStatusText from "./utils/httpStatusText";
+import chatsRouter from "./routes/chatsRoute";
+import { ValidationError } from "zod-validation-error";
 
 configDotenv();
 
 const PORT = process.env.PORT;
 
-const app = epxress();
+export const app = express();
 
 mongodbConnection();
 
+app.use(cors());
+app.use(express.json());
+app.use(morgan("dev"));
+app.use(helmet());
+
+app.use("/api/v1/chats", chatsRouter);
+
+// TODO make the create chat service make both private and group chats
+
+app.use(
+  (error: TGlobalError, req: Request, res: Response, next: NextFunction) => {
+    const errorResponse: TErrorResponse = {
+      status: error.statusText || httpStatusText.ERROR,
+      message: error.message || "Something went wrong",
+      code: error.statusCode || 500,
+      data: null,
+    };
+
+    if (error.validationErrors) {
+      errorResponse.validationErrors = error.validationErrors;
+    }
+    res.status(error.statusCode || 500).json(errorResponse);
+  }
+);
+
 const server = http.createServer(app);
 
-const io = new Server(server, {
-  cors: {
-    origin: "*",
-    methods: ["GET", "POST"],
-  },
-});
-
-app.use(cors());
+setupSocket(server);
 
 consumeMessage("users", usersServices.createUser);
-consumeMessage("chats", chatsServices.createChat);
-
-io.on("connection", (socket) => {
-  console.log("✅ New client connected:", socket.id);
-
-  // Join chat room
-  socket.on("join_chat", (chatId) => {
-    socket.join(chatId);
-    console.log(`📥 ${socket.id} joined room ${chatId}`);
-  });
-
-  // Handle sending messages
-  socket.on("send_message", (messageData) => {
-    const { chatId, senderId, content } = messageData;
-    const message = {
-      chatId,
-      senderId,
-      content,
-      createdAt: new Date(),
-    };
-    console.log("📨 Message received:", message);
-    io.to(chatId).emit("receive_message", message);
-  });
-
-  // Handle disconnect
-  socket.on("disconnect", () => {
-    console.log("❌ Client disconnected:", socket.id);
-  });
-});
+consumeMessage("chats", chatsServices.createChatService);
 
 server.listen(PORT || 4000, () => {
   console.log(`Server running on port ${PORT}`);

@@ -1,5 +1,5 @@
 import connectRabbitMQ from "../../config/connectToRabbitMq";
-import globalError from "../globalError";
+import GlobalError from "../GlobalError";
 import httpStatusText from "../httpStatusText";
 
 const consumeMessage = async (
@@ -11,7 +11,7 @@ const consumeMessage = async (
     let message = null;
 
     if (!channel) {
-      const error = globalError.create(
+      const error = new GlobalError(
         "Failed to connect to RabbitMQ",
         500,
         httpStatusText.ERROR

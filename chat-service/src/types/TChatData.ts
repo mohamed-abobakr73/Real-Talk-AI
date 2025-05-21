@@ -1,8 +1,8 @@
-import TChatType from "./TChatType";
+import { TChatType, TChatUser } from "./";
 
 type TChatData = {
   chatType: TChatType;
-  users: string[];
+  users: TChatUser[];
 };
 
 export default TChatData;
