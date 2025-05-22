@@ -28,7 +28,7 @@ ${conversation}
 Return only the most relevant messages or summaries that match the query.`;
 };
 
-export default {
+export {
   summarizeConversation,
   messageSuggestions,
   messageTranslate,

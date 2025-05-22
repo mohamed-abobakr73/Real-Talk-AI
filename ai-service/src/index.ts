@@ -2,10 +2,10 @@ import express, { NextFunction, Request, Response } from "express";
 import helmet from "helmet";
 import morgan from "morgan";
 import cors from "cors";
-import Groq from "groq-sdk";
 import httpStatusText from "./utils/httpStatusText";
 import { configDotenv } from "dotenv";
 import { TGlobalError } from "./types";
+import aiRouter from "./routes/aiRoute";
 
 configDotenv();
 
@@ -17,6 +17,8 @@ app.use(express.json());
 app.use(morgan("dev"));
 app.use(cors());
 app.use(helmet());
+
+app.use("/ai", aiRouter);
 
 app.use(
   (error: TGlobalError, req: Request, res: Response, next: NextFunction) => {
