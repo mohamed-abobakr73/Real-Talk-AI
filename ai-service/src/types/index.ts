@@ -1,3 +1,4 @@
 import TGlobalError from "./TGlobalError";
 import TCurrentUser from "./TCurrentUser";
-export { TGlobalError, TCurrentUser };
+import TErrorResponse from "./TErrorResponse";
+export { TGlobalError, TCurrentUser, TErrorResponse };

@@ -4,7 +4,7 @@ import morgan from "morgan";
 import cors from "cors";
 import httpStatusText from "./utils/httpStatusText";
 import { configDotenv } from "dotenv";
-import { TGlobalError } from "./types";
+import { TErrorResponse, TGlobalError } from "./types";
 import aiRouter from "./routes/aiRoute";
 
 configDotenv();
@@ -22,12 +22,17 @@ app.use("/api/v1/ai", aiRouter);
 
 app.use(
   (error: TGlobalError, req: Request, res: Response, next: NextFunction) => {
-    res.status(error.statusCode || 500).json({
+    const errorResponse: TErrorResponse = {
       status: error.statusText || httpStatusText.ERROR,
       message: error.message || "Something went wrong",
       code: error.statusCode || 500,
       data: null,
-    });
+    };
+
+    if (error.validationErrors) {
+      errorResponse.validationErrors = error.validationErrors;
+    }
+    res.status(error.statusCode || 500).json(errorResponse);
   }
 );
 

@@ -3,7 +3,7 @@ import stringValidation from "../utils/zodValidationUtils/stringValidation";
 
 const aiInputSchema = z.discriminatedUnion("type", [
   z.object({
-    type: z.literal("summarizer"),
+    type: z.literal("summarize"),
     data: z.object({
       conversation: stringValidation("conversation", 1, 10000),
     }),
@@ -15,7 +15,7 @@ const aiInputSchema = z.discriminatedUnion("type", [
     }),
   }),
   z.object({
-    type: z.literal("translator"),
+    type: z.literal("translate"),
     data: z.object({
       sourceLang: stringValidation("source lang", 1, 50),
       targetLang: stringValidation("target lang", 1, 50),
