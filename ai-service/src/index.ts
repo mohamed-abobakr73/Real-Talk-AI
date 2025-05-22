@@ -2,6 +2,7 @@ import express, { NextFunction, Request, Response } from "express";
 import helmet from "helmet";
 import morgan from "morgan";
 import cors from "cors";
+import Groq from "groq-sdk";
 import httpStatusText from "./utils/httpStatusText";
 import { configDotenv } from "dotenv";
 import { TGlobalError } from "./types";
