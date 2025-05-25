@@ -39,10 +39,11 @@ const uploadMessageFiles = async (userId: string, files: any) => {
 
 const sendMessageToNotificationService = async (
   queue: string,
-  userId: string,
+  userData: { userId: string; username: string },
   savedMessage: TMessage
 ) => {
   const { chat, message, files } = savedMessage;
+  const { userId, username } = userData;
 
   await sendMessageToQueue(queue, {
     senderId: userId,
@@ -60,6 +61,7 @@ const registerMessageHandler = (socket: Socket, io: Server) => {
         callback(error);
       }
       const userId = socket.data.user.userId;
+      const username = socket.data.user.username;
 
       if (validatedData.files) {
         validatedData.files = await uploadMessageFiles(
@@ -79,7 +81,11 @@ const registerMessageHandler = (socket: Socket, io: Server) => {
 
       io.to(validatedData.chat).emit("receive_message", savedMessage);
 
-      await sendMessageToNotificationService("messages", userId, savedMessage);
+      await sendMessageToNotificationService(
+        "messages",
+        { userId, username },
+        savedMessage
+      );
     } catch (error) {
       callback(error);
     }
