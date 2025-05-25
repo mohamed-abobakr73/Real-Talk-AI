@@ -84,7 +84,9 @@ const checkIfUserAlreadyExistInChat = (
 const sendChatToQueue = async (chat: TChat) => {
   await sendMessageToQueue("chatCreated", {
     chatId: chat._id,
-    users: chat.users,
+    users: chat.users.map((user) => {
+      return { userId: user.user };
+    }),
     name: chat.name ? chat.name : "",
     avatar: chat.avatar ? chat.avatar : "",
   });

@@ -7,7 +7,7 @@ import { TErrorResponse, TGlobalError } from "./types";
 import httpStatusText from "./utils/httpStatusText";
 import mongodbConnection from "./config/mongodbConnection";
 import consumeMessage from "./utils/rabbitmqUtils/consumeMessage";
-import chatServices from "./services/chatServices";
+import chatsServices from "./services/chatsServices";
 
 configDotenv();
 
@@ -38,7 +38,7 @@ app.use(
   }
 );
 
-consumeMessage("chat", chatServices.createChatService);
+consumeMessage("chatCreated", chatsServices.createChatService);
 
 app.listen(PORT || 4002, () => {
   console.log(`Server running on port ${PORT}`);
