@@ -6,6 +6,8 @@ import helmet from "helmet";
 import { TErrorResponse, TGlobalError } from "./types";
 import httpStatusText from "./utils/httpStatusText";
 import mongodbConnection from "./config/mongodbConnection";
+import consumeMessage from "./utils/rabbitmqUtils/consumeMessage";
+import chatServices from "./services/chatServices";
 
 configDotenv();
 
@@ -35,6 +37,8 @@ app.use(
     res.status(error.statusCode || 500).json(errorResponse);
   }
 );
+
+consumeMessage("chat", chatServices.createChatService);
 
 app.listen(PORT || 4002, () => {
   console.log(`Server running on port ${PORT}`);
