@@ -8,6 +8,7 @@ import httpStatusText from "./utils/httpStatusText";
 import mongodbConnection from "./config/mongodbConnection";
 import consumeMessage from "./utils/rabbitmqUtils/consumeMessage";
 import chatsServices from "./services/chatsServices";
+import notificationsRouter from "./routes/notificationsRoute";
 
 configDotenv();
 
@@ -21,6 +22,8 @@ app.use(cors());
 app.use(express.json());
 app.use(morgan("dev"));
 app.use(helmet());
+
+app.use("/notifications", notificationsRouter);
 
 app.use(
   (error: TGlobalError, req: Request, res: Response, next: NextFunction) => {

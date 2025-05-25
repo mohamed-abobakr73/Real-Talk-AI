@@ -47,6 +47,7 @@ const sendMessageToNotificationService = async (
 
   await sendMessageToQueue(queue, {
     senderId: userId,
+    username,
     chatId: chat as string,
     message,
     files,
