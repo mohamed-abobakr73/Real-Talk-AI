@@ -1,4 +1,4 @@
 import TGlobalError from "./TGlobalError";
 import TErrorResponse from "./TErrorResponse";
-
-export { TGlobalError, TErrorResponse };
+import TChat from "./TChat";
+export { TGlobalError, TErrorResponse, TChat };
