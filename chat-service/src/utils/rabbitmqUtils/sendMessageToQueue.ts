@@ -1,10 +1,7 @@
 import { TMessage } from "../../types";
 import publishMessage from "./publishMessage";
 
-const sendMessageToQueue = async (
-  queue: string,
-  message: Partial<TMessage> & { senderId: string; chatId: string }
-) => {
+const sendMessageToQueue = async (queue: string, message: any) => {
   try {
     const stringifiedMessageData = JSON.stringify(message);
 

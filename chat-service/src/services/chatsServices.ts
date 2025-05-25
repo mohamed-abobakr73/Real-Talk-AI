@@ -8,6 +8,7 @@ import {
 } from "../types";
 import GlobalError from "../utils/GlobalError";
 import httpStatusText from "../utils/httpStatusText";
+import sendMessageToQueue from "../utils/rabbitmqUtils/sendMessageToQueue";
 import redisUtils from "../utils/redisUtils";
 import uploadToImageKit from "../utils/uploadToImageKit";
 
@@ -80,6 +81,15 @@ const checkIfUserAlreadyExistInChat = (
   }
 };
 
+const sendChatToQueue = async (chat: TChat) => {
+  await sendMessageToQueue("chatCreated", {
+    chatId: chat._id,
+    users: chat.users,
+    name: chat.name ? chat.name : "",
+    avatar: chat.avatar ? chat.avatar : "",
+  });
+};
+
 const getUserChatsService = async (userId: string) => {
   try {
     const chats = await ChatModel.find({
@@ -116,6 +126,7 @@ const createChatService = async (chatData: TChatData) => {
     checkChatTypeAndNumberOfUsers(users.length, chatType);
 
     const chat = await ChatModel.create(chatPayload);
+    await sendChatToQueue(chat);
     return chat;
   } catch (error) {
     throw error;
@@ -141,6 +152,7 @@ const createGroupChatService = async (
     }
 
     const chat = await ChatModel.create(chatPayload);
+    await sendChatToQueue(chat);
     return chat;
   } catch (error) {
     throw error;
