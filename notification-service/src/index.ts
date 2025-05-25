@@ -5,12 +5,15 @@ import morgan from "morgan";
 import helmet from "helmet";
 import { TErrorResponse, TGlobalError } from "./types";
 import httpStatusText from "./utils/httpStatusText";
+import mongodbConnection from "./config/mongodbConnection";
 
 configDotenv();
 
 const PORT = process.env.PORT;
 
-export const app = express();
+mongodbConnection();
+
+const app = express();
 
 app.use(cors());
 app.use(express.json());
