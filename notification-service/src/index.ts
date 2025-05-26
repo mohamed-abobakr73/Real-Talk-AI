@@ -9,6 +9,7 @@ import mongodbConnection from "./config/mongodbConnection";
 import consumeMessage from "./utils/rabbitmqUtils/consumeMessage";
 import chatsServices from "./services/chatsServices";
 import notificationsRouter from "./routes/notificationsRoute";
+import notificationsServices from "./services/notificationsServices";
 
 configDotenv();
 
@@ -42,6 +43,10 @@ app.use(
 );
 
 consumeMessage("chatCreated", chatsServices.createChatService);
+consumeMessage(
+  "messages",
+  notificationsServices.sentChatMessageNotificationService
+);
 
 app.listen(PORT || 4002, () => {
   console.log(`Server running on port ${PORT}`);
