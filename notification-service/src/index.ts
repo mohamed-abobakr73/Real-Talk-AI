@@ -23,7 +23,7 @@ app.use(express.json());
 app.use(morgan("dev"));
 app.use(helmet());
 
-app.use("/notifications", notificationsRouter);
+app.use("/api/v1/notifications", notificationsRouter);
 
 app.use(
   (error: TGlobalError, req: Request, res: Response, next: NextFunction) => {

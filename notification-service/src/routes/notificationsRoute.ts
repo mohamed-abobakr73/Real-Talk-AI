@@ -6,7 +6,7 @@ import { validateRequestBody } from "../middlewares";
 const notificationsRouter = Router();
 
 notificationsRouter
-  .route("/")
+  .route("/subscribe")
   .post(
     validateRequestBody(subscribeToNotificationsSchema),
     subscribeToNotifications
