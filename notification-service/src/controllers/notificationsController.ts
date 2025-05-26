@@ -5,8 +5,12 @@ import notificationsServices from "../services/notificationsServices";
 const subscribeToNotifications = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const subscription = req.validatedData;
-    console.log(subscription);
+
     res.status(201).json({ status: "success" });
+
+    const pushSubscription =
+      await notificationsServices.savePushSubscriptionDataService(subscription);
+
     await notificationsServices.sendNotificationService(subscription, {
       title: "test title",
     });

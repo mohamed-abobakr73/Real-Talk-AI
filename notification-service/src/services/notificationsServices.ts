@@ -1,4 +1,17 @@
 import webpush from "../config/webPushConfig";
+import PushSubscriptionsModel from "../models/PushSubscriptionsModel";
+import { TNotificationSubscribe } from "../schemas";
+
+const savePushSubscriptionDataService = async (
+  pushData: TNotificationSubscribe
+) => {
+  try {
+    const pushSubscription = await PushSubscriptionsModel.create(pushData);
+    return pushSubscription;
+  } catch (error) {
+    throw error;
+  }
+};
 
 const sendNotificationService = async (subscription: any, payload: any) => {
   try {
@@ -6,12 +19,9 @@ const sendNotificationService = async (subscription: any, payload: any) => {
       subscription,
       JSON.stringify(payload)
     );
-    console.log(sentNotification);
   } catch (error) {
     throw error;
   }
 };
 
-export default {
-  sendNotificationService,
-};
+export default { savePushSubscriptionDataService, sendNotificationService };

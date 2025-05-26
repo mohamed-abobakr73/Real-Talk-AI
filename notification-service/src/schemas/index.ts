@@ -1,3 +1,3 @@
 import subscribeToNotificationsSchema from "./subscribeToNotificationsSchema";
-
-export { subscribeToNotificationsSchema };
+import { TNotificationSubscribe } from "./subscribeToNotificationsSchema";
+export { subscribeToNotificationsSchema, TNotificationSubscribe };

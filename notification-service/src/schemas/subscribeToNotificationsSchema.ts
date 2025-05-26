@@ -9,4 +9,7 @@ const subscribeToNotificationsSchema = z.object({
   }),
 });
 
+export type TNotificationSubscribe = z.infer<
+  typeof subscribeToNotificationsSchema
+>;
 export default subscribeToNotificationsSchema;
