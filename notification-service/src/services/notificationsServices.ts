@@ -5,6 +5,22 @@ import GlobalError from "../utils/GlobalError";
 import httpStatusText from "../utils/httpStatusText";
 import chatsServices from "./chatsServices";
 
+const sendNotificationsToSubscribers = async (
+  chatUsers: { userId: string }[],
+  payload: any
+) => {
+  try {
+    for (const user of chatUsers) {
+      const subscriptions = await getSubscriptionsByUserIdService(user.userId);
+      subscriptions.forEach(
+        async (sub) => await sendNotificationService(sub, payload)
+      );
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+
 const getSubscriptionsByUserIdService = async (userId: string) => {
   try {
     const subscription = await PushSubscriptionsModel.find({
@@ -76,12 +92,7 @@ const sentChatMessageNotificationService = async (payload: any) => {
 
     const chatUsers = chat.users.filter((user) => user.userId !== senderId);
 
-    for (const user of chatUsers) {
-      const subscriptions = await getSubscriptionsByUserIdService(user.userId);
-      subscriptions.forEach(
-        async (sub) => await sendNotificationService(sub, chatMessagePayload)
-      );
-    }
+    sendNotificationsToSubscribers(chatUsers, chatMessagePayload);
 
     return;
   } catch (error) {
