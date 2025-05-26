@@ -5,17 +5,26 @@ import morgan from "morgan";
 import helmet from "helmet";
 import { TErrorResponse, TGlobalError } from "./types";
 import httpStatusText from "./utils/httpStatusText";
+import mongodbConnection from "./config/mongodbConnection";
+import consumeMessage from "./utils/rabbitmqUtils/consumeMessage";
+import chatsServices from "./services/chatsServices";
+import notificationsRouter from "./routes/notificationsRoute";
+import notificationsServices from "./services/notificationsServices";
 
 configDotenv();
 
 const PORT = process.env.PORT;
 
-export const app = express();
+mongodbConnection();
+
+const app = express();
 
 app.use(cors());
 app.use(express.json());
 app.use(morgan("dev"));
 app.use(helmet());
+
+app.use("/api/v1/notifications", notificationsRouter);
 
 app.use(
   (error: TGlobalError, req: Request, res: Response, next: NextFunction) => {
@@ -31,6 +40,12 @@ app.use(
     }
     res.status(error.statusCode || 500).json(errorResponse);
   }
+);
+
+consumeMessage("chatCreated", chatsServices.createChatService);
+consumeMessage(
+  "messages",
+  notificationsServices.sentChatMessageNotificationService
 );
 
 app.listen(PORT || 4002, () => {

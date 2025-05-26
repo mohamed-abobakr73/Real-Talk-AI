@@ -4,6 +4,8 @@ import messagesServices from "../services/messagesServices";
 import validateSocketData from "../middlewares/validateSocketData";
 import { chatsServices } from "../services";
 import { streamUpload } from "../config/uploadFilesToCloudinary";
+import sendMessageToQueue from "../utils/rabbitmqUtils/sendMessageToQueue";
+import { TMessage } from "../types";
 
 const refineUploadedFilesPayload = (userId: string, files: any) => {
   const uploadedFilesPayload = files.map((file: any) => {
@@ -35,6 +37,23 @@ const uploadMessageFiles = async (userId: string, files: any) => {
   return uploadedFilesPayload;
 };
 
+const sendMessageToNotificationService = async (
+  queue: string,
+  userData: { userId: string; username: string },
+  savedMessage: TMessage
+) => {
+  const { chat, message, files } = savedMessage;
+  const { userId, username } = userData;
+
+  await sendMessageToQueue(queue, {
+    senderId: userId,
+    username,
+    chatId: chat as string,
+    message,
+    files,
+  });
+};
+
 const registerMessageHandler = (socket: Socket, io: Server) => {
   socket.on("send_message", async (data, callback) => {
     try {
@@ -43,6 +62,7 @@ const registerMessageHandler = (socket: Socket, io: Server) => {
         callback(error);
       }
       const userId = socket.data.user.userId;
+      const username = socket.data.user.username;
 
       if (validatedData.files) {
         validatedData.files = await uploadMessageFiles(
@@ -61,6 +81,12 @@ const registerMessageHandler = (socket: Socket, io: Server) => {
       );
 
       io.to(validatedData.chat).emit("receive_message", savedMessage);
+
+      await sendMessageToNotificationService(
+        "messages",
+        { userId, username },
+        savedMessage
+      );
     } catch (error) {
       callback(error);
     }
