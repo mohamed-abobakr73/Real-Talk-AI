@@ -12,6 +12,9 @@ import TErrorResponse from "./TErrorResponse";
 import TRedisClient from "./TRedisClient";
 import TFile from "./TFile";
 import TUploadedFile from "./TUploadedFile";
+import TPaginationData from "./TPaginationData";
+import TPaginationInfo from "./TPaginationInfo";
+import TPaginationParams from "./TPaginationParams";
 export {
   TGlobalError,
   TUser,
@@ -27,4 +30,7 @@ export {
   TRedisClient,
   TFile,
   TUploadedFile,
+  TPaginationData,
+  TPaginationInfo,
+  TPaginationParams,
 };

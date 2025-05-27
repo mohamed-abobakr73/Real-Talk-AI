@@ -39,7 +39,7 @@ const getUserConnectionService = async (
       },
     });
 
-    const pagination = paginationInfo(count, connectedUsers.length, limit);
+    const pagination = paginationInfo(count, offset, limit);
 
     return { connectedUsers, pagination };
   } catch (error) {
@@ -68,7 +68,7 @@ const getReceivedConnectionsService = async (
     },
   });
 
-  const pagination = paginationInfo(count, receivedConnections.length, limit);
+  const pagination = paginationInfo(count, offset, limit);
 
   return { receivedConnections, pagination };
 };
@@ -94,7 +94,7 @@ const getUserSentConnectionsService = async (
     },
   });
 
-  const pagination = paginationInfo(count, sentConnections.length, limit);
+  const pagination = paginationInfo(count, offset, limit);
 
   return { sentConnections, pagination };
 };

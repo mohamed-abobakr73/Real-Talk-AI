@@ -21,6 +21,8 @@ import {
 
 const chatsRouter = Router();
 
+chatsRouter.route("/:chatId").get(verifyAccessToken, getChatMessages);
+
 chatsRouter.route("/").get(verifyAccessToken, getUserChats);
 
 chatsRouter
@@ -31,8 +33,6 @@ chatsRouter
     validateRequestBody(createGroupChatSchema),
     createGroupChat
   );
-
-chatsRouter.route("/:chatId").get(verifyAccessToken, getChatMessages);
 
 chatsRouter
   .route("/:chatId/members")
