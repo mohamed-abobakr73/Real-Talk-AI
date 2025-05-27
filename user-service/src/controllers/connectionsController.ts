@@ -75,8 +75,6 @@ const sendConnection = asyncHandler(
     const { connectedUserId } = req.validatedData;
     const currentUserId = req.currentUser?.userId;
 
-    console.log(currentUserId);
-    console.log(connectedUserId);
     const connection = await connectionsServices.sendConnectionService(
       currentUserId!,
       connectedUserId

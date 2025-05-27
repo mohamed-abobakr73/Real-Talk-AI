@@ -9,7 +9,6 @@ import TMessage from "./TMessage";
 import TCreateMessageInput from "./TCreateMessageInput";
 import TChatUser from "./TChatUser";
 import TErrorResponse from "./TErrorResponse";
-import TRedisClient from "./TRedisClient";
 import TFile from "./TFile";
 import TUploadedFile from "./TUploadedFile";
 import TPaginationData from "./TPaginationData";
@@ -27,7 +26,6 @@ export {
   TGroupChatData,
   TChatUser,
   TErrorResponse,
-  TRedisClient,
   TFile,
   TUploadedFile,
   TPaginationData,

@@ -1,7 +1,7 @@
 import prisma from "../config/prismaClient";
 import { ConnectionStatus } from "../generated/prisma";
 import { TChatType, TPaginationData } from "../types";
-import globalError from "../utils/globalError";
+import GlobalError from "../utils/GlobalError";
 import httpStatusText from "../utils/httpStatusText";
 import paginationInfo from "../utils/paginationUtils/paginationInfo";
 import publishMessage from "../utils/rabbitmqUtils/publishMessage";
@@ -127,7 +127,7 @@ const updateConnectionStatusService = async (
     });
 
     if (!connection || connection.connectionStatus !== "pending") {
-      const error = globalError.create(
+      const error = new GlobalError(
         "Connection not found, or already accepted or rejected",
         404,
         httpStatusText.NOT_FOUND
@@ -136,7 +136,7 @@ const updateConnectionStatusService = async (
     }
 
     if (connection.connectedUserId !== userId) {
-      const error = globalError.create(
+      const error = new GlobalError(
         "You are not authorized to update this connection",
         401,
         httpStatusText.FAIL

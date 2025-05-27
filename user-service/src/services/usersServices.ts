@@ -1,6 +1,6 @@
 import prisma from "../config/prismaClient";
 import { User } from "../generated/prisma";
-import globalError from "../utils/globalError";
+import GlobalError from "../utils/GlobalError";
 import httpStatusText from "../utils/httpStatusText";
 import uploadToImageKit from "../utils/uploadToImageKit";
 
@@ -14,7 +14,7 @@ const getUserService = async (userParam: string) => {
     });
 
     if (!user) {
-      const error = globalError.create(
+      const error = new GlobalError(
         "User not found",
         404,
         httpStatusText.NOT_FOUND
@@ -45,7 +45,7 @@ const updateUserService = async (fields: Partial<User>) => {
     });
 
     if (!user) {
-      const error = globalError.create(
+      const error = new GlobalError(
         "User not found",
         404,
         httpStatusText.NOT_FOUND

@@ -1,5 +1,5 @@
 import connectRabbitMQ from "../../config/connectToRabbitMq";
-import globalError from "../globalError";
+import GlobalError from "../GlobalError";
 import httpStatusText from "../httpStatusText";
 
 const publishMessage = async (queueName: string, message: string) => {
@@ -7,7 +7,7 @@ const publishMessage = async (queueName: string, message: string) => {
     const channel = await connectRabbitMQ(queueName);
 
     if (!channel) {
-      const error = globalError.create(
+      const error = new GlobalError(
         "Failed to connect to RabbitMQ",
         500,
         httpStatusText.ERROR
@@ -17,7 +17,7 @@ const publishMessage = async (queueName: string, message: string) => {
 
     const sentMessage = channel.sendToQueue(queueName, Buffer.from(message));
     if (!sentMessage) {
-      const error = globalError.create(
+      const error = new GlobalError(
         "Failed to send message to RabbitMQ",
         500,
         httpStatusText.ERROR

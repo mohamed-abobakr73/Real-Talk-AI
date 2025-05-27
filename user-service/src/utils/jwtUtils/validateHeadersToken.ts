@@ -1,6 +1,6 @@
 import { Request } from "express";
 import httpStatusText from "../httpStatusText";
-import globalError from "../globalError";
+import GlobalError from "../GlobalError";
 import { TTypeOfToken } from "../../types";
 
 const validateHeadersToken = (typeOfToken: TTypeOfToken, req: Request) => {
@@ -13,7 +13,7 @@ const validateHeadersToken = (typeOfToken: TTypeOfToken, req: Request) => {
   }
 
   if (!requestAuth) {
-    const error = globalError.create(
+    const error = new GlobalError(
       `${typeOfToken} token not found`,
       401,
       httpStatusText.FAIL
@@ -23,7 +23,7 @@ const validateHeadersToken = (typeOfToken: TTypeOfToken, req: Request) => {
 
   const token = requestAuth!.split(" ")[1];
   if (!token) {
-    const error = globalError.create(
+    const error = new GlobalError(
       `${typeOfToken} token not found`,
       401,
       httpStatusText.FAIL

@@ -166,7 +166,7 @@ const changeEmail = asyncHandler(
 const oAuth = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const profile = req.profile;
-    console.log(profile?.provider);
+
     const { user, token, refreshToken } = await OAuthServices.oAuthService(
       profile!
     );
