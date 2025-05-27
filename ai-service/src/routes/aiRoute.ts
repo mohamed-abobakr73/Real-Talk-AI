@@ -1,8 +1,8 @@
 import { Router } from "express";
-import validateRequestBody from "../middlewares/validateRequestBody";
+import { validateRequestBody } from "../middlewares";
 import aiInputSchema from "../schemas/aiInputSchema";
 import { getAiResponse, getSpeechToText } from "../controllers/aiController";
-import verifyAccessToken from "../middlewares/verifyAccessToken";
+import { verifyAccessToken } from "../middlewares";
 import upload from "../config/multer";
 
 const aiRouter = Router();

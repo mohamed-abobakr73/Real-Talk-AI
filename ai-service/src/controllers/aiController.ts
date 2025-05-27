@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import asyncHandler from "../middlewares/asyncHandler";
+import { asyncHandler } from "../middlewares";
 import httpStatusText from "../utils/httpStatusText";
 import aiServices from "../services/aiServices";
 import GlobalError from "../utils/globalError";
@@ -29,12 +29,10 @@ const getSpeechToText = asyncHandler(
 
     const speechText = await aiServices.speechToTextService(req.file);
 
-    return res
-      .status(200)
-      .json({
-        status: httpStatusText.SUCCESS,
-        data: { speechText: speechText },
-      });
+    return res.status(200).json({
+      status: httpStatusText.SUCCESS,
+      data: { speechText: speechText },
+    });
   }
 );
 
