@@ -15,4 +15,13 @@ const getAiResponse = asyncHandler(
   }
 );
 
-export { getAiResponse };
+const getSpeechToText = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    if (req.file) {
+      req.validatedData.audio = req.file;
+    }
+    console.log(req.validatedData);
+  }
+);
+
+export { getAiResponse, getSpeechToText };
