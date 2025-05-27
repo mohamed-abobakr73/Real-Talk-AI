@@ -83,7 +83,7 @@ const generateAiResponseService = async (type: string, data: any) => {
 const speechToTextService = async (audio: any) => {
   try {
     const params = {
-      audio: audio,
+      audio: audio.buffer,
       speech_model: "slam-1" as SpeechModel,
     };
 
