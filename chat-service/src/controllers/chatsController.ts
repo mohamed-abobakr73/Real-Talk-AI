@@ -2,14 +2,23 @@ import { NextFunction, Request, Response } from "express";
 import asyncHandler from "../middlewares/asyncHandler";
 import httpStatusText from "../utils/httpStatusText";
 import { chatsServices, messagesServices } from "../services";
+import paginationParams from "../utils/paginationUtils/paginationParams";
 
 const getUserChats = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const user = req.currentUser!;
 
-    const userChats = await chatsServices.getUserChatsService(user.userId);
+    const paginationData = paginationParams(req.query);
 
-    return res.status(200).json({ status: httpStatusText.SUCCESS, userChats });
+    const { chats: userChats, pagination } =
+      await chatsServices.getUserChatsService(user.userId, paginationData);
+
+    return res
+      .status(200)
+      .json({
+        status: httpStatusText.SUCCESS,
+        data: { userChats, pagination },
+      });
   }
 );
 

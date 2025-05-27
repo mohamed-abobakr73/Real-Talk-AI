@@ -5,9 +5,11 @@ import {
   TChatData,
   TChatUser,
   TChat,
+  TPaginationData,
 } from "../types";
 import GlobalError from "../utils/GlobalError";
 import httpStatusText from "../utils/httpStatusText";
+import paginationInfo from "../utils/paginationUtils/paginationInfo";
 import sendMessageToQueue from "../utils/rabbitmqUtils/sendMessageToQueue";
 import redisUtils from "../utils/redisUtils";
 import uploadToImageKit from "../utils/uploadToImageKit";
@@ -92,13 +94,26 @@ const sendChatToQueue = async (chat: TChat) => {
   });
 };
 
-const getUserChatsService = async (userId: string) => {
+const getUserChatsService = async (
+  userId: string,
+  paginationData: TPaginationData
+) => {
   try {
+    const { limit, offset } = paginationData;
+
+    const count = await ChatModel.countDocuments({
+      users: { $elemMatch: { user: userId } },
+    });
+
     const chats = await ChatModel.find({
       users: { $elemMatch: { user: userId } },
-    }).populate("lastMessage");
+    })
+      .populate("lastMessage")
+      .skip(offset)
+      .limit(limit);
 
-    return chats;
+    const pagination = paginationInfo(count, chats.length, limit);
+    return { chats, pagination };
   } catch (error) {
     throw error;
   }
