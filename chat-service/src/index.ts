@@ -1,4 +1,4 @@
-import express, { NextFunction, Request, Response } from "express";
+import express from "express";
 import http from "http";
 import cors from "cors";
 import { configDotenv } from "dotenv";
@@ -10,9 +10,9 @@ import chatsServices from "./services/chatsServices";
 import setupSocket from "./socketHandler";
 import morgan from "morgan";
 import helmet from "helmet";
-import { TErrorResponse, TGlobalError } from "./types";
-import httpStatusText from "./utils/httpStatusText";
+
 import chatsRouter from "./routes/chatsRoute";
+import { createLimiter, globalErrorHandler } from "./middlewares";
 
 configDotenv();
 
@@ -22,30 +22,23 @@ export const app = express();
 
 mongodbConnection();
 
-app.use(cors());
-app.use(express.json({ limit: "3mb" }));
-app.use(express.urlencoded({ extended: true, limit: "3mb" }));
-app.use(morgan("dev"));
-app.use(mongoSanitize());
-app.use(helmet());
+const startApp = async () => {
+  const limiter = await createLimiter();
 
-app.use("/api/v1/chats", chatsRouter);
+  app.use(cors());
+  app.use(express.json({ limit: "3mb" }));
+  app.use(express.urlencoded({ extended: true, limit: "3mb" }));
+  app.use(morgan("dev"));
+  app.use(limiter);
+  app.use(mongoSanitize());
+  app.use(helmet());
 
-app.use(
-  (error: TGlobalError, req: Request, res: Response, next: NextFunction) => {
-    const errorResponse: TErrorResponse = {
-      status: error.statusText || httpStatusText.ERROR,
-      message: error.message || "Something went wrong",
-      code: error.statusCode || 500,
-      data: null,
-    };
+  app.use("/api/v1/chats", chatsRouter);
 
-    if (error.validationErrors) {
-      errorResponse.validationErrors = error.validationErrors;
-    }
-    res.status(error.statusCode || 500).json(errorResponse);
-  }
-);
+  app.use(globalErrorHandler);
+};
+
+startApp();
 
 const server = http.createServer(app);
 
