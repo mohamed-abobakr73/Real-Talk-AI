@@ -1,3 +1,5 @@
+import { SpeechModel } from "assemblyai";
+import assemblyAiClient from "../config/assemblyAiConfig";
 import groqClient from "../config/groqConfig";
 import GlobalError from "../utils/globalError";
 import httpStatusText from "../utils/httpStatusText";
@@ -78,6 +80,31 @@ const generateAiResponseService = async (type: string, data: any) => {
   }
 };
 
+const speechToTextService = async (audio: any) => {
+  try {
+    const params = {
+      audio: audio.buffer,
+      speech_model: "slam-1" as SpeechModel,
+    };
+
+    const transcript = await assemblyAiClient.transcripts.transcribe(params);
+
+    if (transcript.status === "error") {
+      const error = new GlobalError(
+        transcript.error!,
+        400,
+        httpStatusText.FAIL
+      );
+      throw error;
+    }
+
+    return transcript.text;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default {
   generateAiResponseService,
+  speechToTextService,
 };
