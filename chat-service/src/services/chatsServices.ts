@@ -112,7 +112,7 @@ const getUserChatsService = async (
       .skip(offset)
       .limit(limit);
 
-    const pagination = paginationInfo(count, chats.length, limit);
+    const pagination = paginationInfo(count, offset, limit);
     return { chats, pagination };
   } catch (error) {
     throw error;

@@ -1,7 +1,13 @@
 import { MessageModel } from "../models";
-import { TChat, TCreateMessageInput, TMessage } from "../types";
+import {
+  TChat,
+  TCreateMessageInput,
+  TMessage,
+  TPaginationData,
+} from "../types";
 import GlobalError from "../utils/GlobalError";
 import httpStatusText from "../utils/httpStatusText";
+import paginationInfo from "../utils/paginationUtils/paginationInfo";
 import chatsServices from "./chatsServices";
 import filesServices from "./filesServices";
 
@@ -22,12 +28,24 @@ const appendMessageToChat = async (chat: TChat, message: string) => {
   await chat.save();
 };
 
-const getChatMessagesService = async (userId: string, chatId: string) => {
+const getChatMessagesService = async (
+  userId: string,
+  chatId: string,
+  paginationData: TPaginationData
+) => {
   try {
     const chat = await chatsServices.getChatService(userId, chatId);
 
-    const messages = await MessageModel.find({ chat: chatId });
-    return messages;
+    const { limit, offset } = paginationData;
+
+    const count = chat.messages.length;
+
+    const messages = await MessageModel.find({ chat: chatId })
+      .skip(offset)
+      .limit(limit);
+
+    const pagination = paginationInfo(count, offset, limit);
+    return { messages, pagination };
   } catch (error) {
     throw error;
   }

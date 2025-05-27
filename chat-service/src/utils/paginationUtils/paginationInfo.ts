@@ -2,7 +2,7 @@ import { TPaginationInfo } from "../../types";
 
 const paginationInfo = (
   count: number,
-  rows: number,
+  offset: number,
   limit: number
 ): TPaginationInfo => {
   const totalPages = Math.ceil(count / limit);
@@ -10,7 +10,7 @@ const paginationInfo = (
   return {
     totalItems: count,
     totalPages,
-    currentPage: Math.ceil(rows / limit),
+    currentPage: Math.ceil(offset / limit) + 1,
     itemsPerPage: limit,
   };
 };

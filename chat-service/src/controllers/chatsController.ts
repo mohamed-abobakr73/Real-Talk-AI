@@ -3,6 +3,7 @@ import asyncHandler from "../middlewares/asyncHandler";
 import httpStatusText from "../utils/httpStatusText";
 import { chatsServices, messagesServices } from "../services";
 import paginationParams from "../utils/paginationUtils/paginationParams";
+import GlobalError from "../utils/GlobalError";
 
 const getUserChats = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -13,12 +14,10 @@ const getUserChats = asyncHandler(
     const { chats: userChats, pagination } =
       await chatsServices.getUserChatsService(user.userId, paginationData);
 
-    return res
-      .status(200)
-      .json({
-        status: httpStatusText.SUCCESS,
-        data: { userChats, pagination },
-      });
+    return res.status(200).json({
+      status: httpStatusText.SUCCESS,
+      data: { userChats, pagination },
+    });
   }
 );
 
@@ -26,11 +25,27 @@ const getChatMessages = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const { chatId } = req.params;
     const { userId } = req.currentUser!;
-    const messages = await messagesServices.getChatMessagesService(
-      userId,
-      chatId
-    );
-    return res.status(200).json({ status: httpStatusText.SUCCESS, messages });
+
+    if (!chatId) {
+      const error = new GlobalError(
+        "Chat id is required",
+        400,
+        httpStatusText.FAIL
+      );
+      return next(error);
+    }
+
+    const paginationData = paginationParams(req.query);
+
+    const { messages, pagination } =
+      await messagesServices.getChatMessagesService(
+        userId,
+        chatId,
+        paginationData
+      );
+    return res
+      .status(200)
+      .json({ status: httpStatusText.SUCCESS, data: { messages, pagination } });
   }
 );
 
