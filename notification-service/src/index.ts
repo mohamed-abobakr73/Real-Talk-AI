@@ -1,10 +1,9 @@
-import express, { NextFunction, Request, Response } from "express";
+import express from "express";
 import cors from "cors";
 import { configDotenv } from "dotenv";
 import morgan from "morgan";
 import helmet from "helmet";
-import { TErrorResponse, TGlobalError } from "./types";
-import httpStatusText from "./utils/httpStatusText";
+import mongoSanitize from "express-mongo-sanitize";
 import mongodbConnection from "./config/mongodbConnection";
 import consumeMessage from "./utils/rabbitmqUtils/consumeMessage";
 import chatsServices from "./services/chatsServices";
@@ -26,6 +25,7 @@ const startServer = async () => {
   app.use(express.json({ limit: "1mb" }));
   app.use(morgan("dev"));
   app.use(limiter);
+  app.use(mongoSanitize());
   app.use(helmet());
 
   app.use("/api/v1/notifications", notificationsRouter);
