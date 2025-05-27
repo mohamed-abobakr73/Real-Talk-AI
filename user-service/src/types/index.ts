@@ -1,4 +1,5 @@
 import TGlobalError from "./TGlobalError";
+import TErrorResponse from "./TErrorResponse";
 import TRedisClient from "./TRedisClient";
 import TCurrentUser from "./TCurrentUser";
 import TTypeOfToken from "./TTypeOfToken";
@@ -10,6 +11,7 @@ import TPaginationData from "./TPaginationData";
 import TChatType from "./TChatType";
 export {
   TGlobalError,
+  TErrorResponse,
   TRedisClient,
   TCurrentUser,
   TTypeOfToken,

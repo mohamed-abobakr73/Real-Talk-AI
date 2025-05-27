@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import globalError from "../globalError";
+import GlobalError from "../GlobalError";
 import httpStatusText from "../httpStatusText";
 import { TTypeOfToken } from "../../types";
 const validateAccessOrRefreshToken = (
@@ -15,7 +15,7 @@ const validateAccessOrRefreshToken = (
 
   const isValidToken = jwt.verify(token, TOKEN_SECRET_KEY);
   if (!isValidToken) {
-    const error = globalError.create(
+    const error = new GlobalError(
       `Invalid ${typeOfToken} token`,
       401,
       httpStatusText.FAIL

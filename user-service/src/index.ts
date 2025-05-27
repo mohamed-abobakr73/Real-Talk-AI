@@ -9,7 +9,8 @@ import httpStatusText from "./utils/httpStatusText";
 import { authRouter, connectionsRouter, usersRouter } from "./routes";
 import passport from "passport";
 import "./config/passportOAuth";
-import { createLimiter } from "./middlewares";
+import { createLimiter, globalErrorHandler } from "./middlewares";
+import { TErrorResponse } from "./types";
 
 configDotenv();
 
@@ -30,16 +31,7 @@ const startServer = async () => {
   app.use("/api/v1/users", usersRouter);
   app.use("/api/v1/connections", connectionsRouter);
 
-  app.use(
-    (error: TGlobalError, req: Request, res: Response, next: NextFunction) => {
-      res.status(error.statusCode || 500).json({
-        status: error.statusText || httpStatusText.ERROR,
-        message: error.message || "Something went wrong",
-        code: error.statusCode || 500,
-        data: null,
-      });
-    }
-  );
+  app.use(globalErrorHandler);
 };
 
 startServer();

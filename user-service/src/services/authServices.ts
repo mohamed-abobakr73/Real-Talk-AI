@@ -5,7 +5,7 @@ import hashKey from "../utils/hashingUtils/hashKey";
 import usersServices from "./usersServices";
 import verifyOtpCode from "../utils/otpUtils/verifyOTPCode";
 import { getTokensAfterRegistrationOrLogin } from "../utils/jwtUtils";
-import globalError from "../utils/globalError";
+import GlobalError from "../utils/GlobalError";
 import httpStatusText from "../utils/httpStatusText";
 import compareHashedValues from "../utils/hashingUtils/compareHashedValues";
 import sanitizeUser from "../utils/sanitizeUser";
@@ -50,7 +50,7 @@ const verifyOtpService = async (email: string, otp: string) => {
     const user = (await usersServices.getUserService(email)) as User;
 
     if (user.verified) {
-      const error = globalError.create(
+      const error = new GlobalError(
         "User already verified",
         400,
         httpStatusText.FAIL
@@ -61,7 +61,7 @@ const verifyOtpService = async (email: string, otp: string) => {
     const isMatch = await verifyOtpCode(email, otp);
 
     if (!isMatch) {
-      const error = globalError.create(
+      const error = new GlobalError(
         "Invalid OTP Code",
         400,
         httpStatusText.FAIL
@@ -86,7 +86,7 @@ const loginService = async (email: string, password: string) => {
   try {
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user || !user.password) {
-      const error = globalError.create(
+      const error = new GlobalError(
         "Invalid credentials",
         404,
         httpStatusText.NOT_FOUND
@@ -95,7 +95,7 @@ const loginService = async (email: string, password: string) => {
     }
 
     if (!user.verified) {
-      const error = globalError.create(
+      const error = new GlobalError(
         "User is not verified, please verify your account first then try to login",
         401,
         httpStatusText.FAIL
@@ -105,7 +105,7 @@ const loginService = async (email: string, password: string) => {
 
     const passwordMatch = await compareHashedValues(password, user.password!);
     if (!passwordMatch) {
-      const error = globalError.create(
+      const error = new GlobalError(
         "Invalid credentials",
         401,
         httpStatusText.FAIL
@@ -124,7 +124,7 @@ const resendOtpService = async (email: string) => {
   try {
     const user = await usersServices.getUserService(email);
     if (user.verified) {
-      const error = globalError.create(
+      const error = new GlobalError(
         "User already verified",
         400,
         httpStatusText.FAIL
@@ -147,7 +147,7 @@ const resetPasswordService = async (
     const isMatch = await verifyOtpCode(email, otp);
 
     if (!isMatch) {
-      const error = globalError.create(
+      const error = new GlobalError(
         "Invalid OTP Code",
         400,
         httpStatusText.FAIL
