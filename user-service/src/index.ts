@@ -1,16 +1,13 @@
-import express, { NextFunction, Request, Response } from "express";
+import express from "express";
 import { configDotenv } from "dotenv";
 import morgan from "morgan";
 import helmet from "helmet";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import TGlobalError from "./types/TGlobalError";
-import httpStatusText from "./utils/httpStatusText";
 import { authRouter, connectionsRouter, usersRouter } from "./routes";
 import passport from "passport";
 import "./config/passportOAuth";
 import { createLimiter, globalErrorHandler } from "./middlewares";
-import { TErrorResponse } from "./types";
 
 configDotenv();
 

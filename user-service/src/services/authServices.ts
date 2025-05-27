@@ -45,8 +45,6 @@ const signupService = async (userData: TNewUser) => {
 
 const verifyOtpService = async (email: string, otp: string) => {
   try {
-    console.log(email);
-
     const user = (await usersServices.getUserService(email)) as User;
 
     if (user.verified) {
