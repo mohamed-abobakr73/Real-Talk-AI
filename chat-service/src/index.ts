@@ -3,6 +3,7 @@ import http from "http";
 import cors from "cors";
 import { configDotenv } from "dotenv";
 import mongodbConnection from "./config/mongodbConnection";
+import mongoSanitize from "express-mongo-sanitize";
 import consumeMessage from "./utils/rabbitmqUtils/consumeMessage";
 import usersServices from "./services/usersServices";
 import chatsServices from "./services/chatsServices";
@@ -25,6 +26,7 @@ app.use(cors());
 app.use(express.json({ limit: "3mb" }));
 app.use(express.urlencoded({ extended: true, limit: "3mb" }));
 app.use(morgan("dev"));
+app.use(mongoSanitize());
 app.use(helmet());
 
 app.use("/api/v1/chats", chatsRouter);
