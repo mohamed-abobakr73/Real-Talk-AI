@@ -1,0 +1,57 @@
+version: "3.9"
+
+services:
+  nginx:
+    build:
+      context: ./nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - users-service
+      - chat-service
+      - notification-service
+      - ai-service
+
+  users-service:
+    build:
+      context: ./users-service
+    ports:
+      - "3001:3000"
+    environment:
+      DB_HOST: users-db
+      DB_PORT: 5432
+      DB_USER: myuser
+      DB_PASSWORD: mypassword
+      DB_NAME: mydatabase
+    depends_on:
+      - users-db
+
+  users-db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: mydatabase
+    volumes:
+      - users-data:/var/lib/postgresql/data
+
+  chat-service:
+    build:
+      context: ./chat-service
+    ports:
+      - "3002:3000"
+
+  notification-service:
+    build:
+      context: ./notification-service
+    ports:
+      - "3003:3000"
+
+  ai-service:
+    build:
+      context: ./ai-service
+    ports:
+      - "3004:3000"
+
+volumes:
+  users-data:
