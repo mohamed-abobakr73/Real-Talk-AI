@@ -47,6 +47,6 @@ setupSocket(server);
 consumeMessage("users", usersServices.createUser);
 consumeMessage("chats", chatsServices.createChatService);
 
-server.listen(PORT || 4000, () => {
+server.listen(PORT || 3001, () => {
   console.log(`Server running on port ${PORT}`);
 });

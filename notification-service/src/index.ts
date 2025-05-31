@@ -41,6 +41,6 @@ consumeMessage(
   notificationsServices.sentChatMessageNotificationService
 );
 
-app.listen(PORT || 4002, () => {
+app.listen(PORT || 3003, () => {
   console.log(`Server running on port ${PORT}`);
 });
